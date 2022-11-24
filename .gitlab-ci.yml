@@ -9,6 +9,9 @@ my_job_1:
     firstStage
   script:
     - echo "job 1"
+#    - ssh -i $DRP3_KEY
+    - scp -i $DRP3_KEY -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
+#    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/
 
 my_job_2:
   stage:
