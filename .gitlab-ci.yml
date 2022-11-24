@@ -11,7 +11,7 @@ my_job_1:
     - echo "job 1"
     - ls
     - chmod 400 ${DRP3_KEY}
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} ./app root@198.199.111.109:/root/projects/automation_dashboard/
+    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
 #    - ssh -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
 #    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/
