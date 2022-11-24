@@ -1,13 +1,17 @@
 
 stages:
-  firstStage
-  secondStage
+  - firstStage
+  - secondStage
 
 
 my_job_1:
+  stage:
+    firstStage
   script:
     - echo "job 1"
 
 my_job_2:
+  stage:
+    secondStage
   script:
     - echo "foo bar"
