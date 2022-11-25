@@ -27,6 +27,7 @@ deploy_to_prod:
   script:
     - echo "job 1"
     - ls
+    - ls
     - chmod 400 ${DRP3_KEY}
     - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
     - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:/root/projects/automation_dashboard/
