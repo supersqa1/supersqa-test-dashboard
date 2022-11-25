@@ -45,11 +45,12 @@ deploy_to_prod:
 uat_automation:
   stage:
     tests_on_staging
+  image: python:3.11
   services:
     - selenium/standalone-firefox
   script:
     - echo "ABC"
-    - python3 -m pip3 install -r ./requirements.txt
+    - pip3 install -r ./requirements.txt
     - pytest -m healthcheck
 
   #my_job_2:
