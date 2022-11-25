@@ -12,7 +12,7 @@ code_quality:
 
   script:
     - pip3 install -r ./requirements.txt
-    - pylint ./app
+    - pylint ./app --recursive=true
 
 
 deploy_to_staging:
