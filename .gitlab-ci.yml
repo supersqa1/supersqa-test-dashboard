@@ -1,25 +1,32 @@
 
 stages:
+  - pre_deploy
   - deploy_to_staging
   - tests_on_staging
   - deploy_to_prod
 
+code_quality:
+  stage:
+    pre_deploy
+  script:
+    - pylint ./app
 
-#deploy_to_staging:
-#  stage:
-#    deploy_to_staging
-#  script:
-#    - echo "job 1"
-#    - ls
-#    - chmod 400 ${DRP3_KEY}
-#    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
-#    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:/root/projects/automation_dashboard/
-#    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv /root/projects/automation_dashboard/venv_dashboard"
-#    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "/root/projects/automation_dashboard/venv_dashboard/bin/python -m pip install -r /root/projects/automation_dashboard/requirements.txt"
-#    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd /root/projects/automation_dashboard/app && /root/projects/automation_dashboard/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 app:app --daemon --reload"
-##    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "venv_dashboard/bin/python /root/projects/automation_dashboard/app/app.py"
-##    - ssh -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
-##    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/
+      
+deploy_to_staging:
+  stage:
+    deploy_to_staging
+  script:
+    - echo "job 1"
+    - ls
+    - chmod 400 ${DRP3_KEY}
+    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
+    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:/root/projects/automation_dashboard/
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv /root/projects/automation_dashboard/venv_dashboard"
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "/root/projects/automation_dashboard/venv_dashboard/bin/python -m pip install -r /root/projects/automation_dashboard/requirements.txt"
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd /root/projects/automation_dashboard/app && /root/projects/automation_dashboard/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 app:app --daemon --reload"
+#    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "venv_dashboard/bin/python /root/projects/automation_dashboard/app/app.py"
+#    - ssh -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
+#    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/
 
 deploy_to_prod:
   stage:
@@ -50,8 +57,8 @@ uat_automation:
     - selenium/standalone-firefox
   script:
     - echo "ABC"
-    - pip3 install -r ./requirements.txt
-    - pytest -m healthcheck
+    - pip3 install -r ./uat_automation/requirements.txt
+    - pytest -m healthcheck ./uat_automation/tests
 
   #my_job_2:
 #  stage:
