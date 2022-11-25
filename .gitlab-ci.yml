@@ -45,6 +45,8 @@ deploy_to_prod:
 uat_automation:
   stage:
     tests_on_staging
+  services:
+    - selenium/standalone-firefox
   script:
     - echo "ABC"
     - python3 -m pip3 install -r ./requirements.txt
