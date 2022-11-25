@@ -42,8 +42,15 @@ deploy_to_prod:
       when: always
       allow_failure: false
 
+uat_automation:
+  stage:
+    tests_on_staging
+  script:
+    - echo "ABC"
+    - python3 -m pip install -r ./requirements.txt
+    - pytest -m healthcheck
 
-      #my_job_2:
+  #my_job_2:
 #  stage:
 #    secondStage
 #  script:
