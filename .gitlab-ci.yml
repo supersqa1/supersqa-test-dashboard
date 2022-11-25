@@ -37,9 +37,10 @@ deploy_to_prod:
   #    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "venv_dashboard/bin/python /root/projects/automation_dashboard/app/app.py"
   #    - ssh -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
   #    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/
-#  rules:
-#    - if: ("$CI_COMMIT_BRANCH" == "main")
-#      when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+      allow_failure: false
 
 
       #my_job_2:
