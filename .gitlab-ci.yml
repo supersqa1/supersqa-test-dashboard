@@ -8,10 +8,13 @@ stages:
 code_quality:
   stage:
     pre_deploy
+  image: python:3.11
+
   script:
+    - pip3 install -r ./uat_automation/requirements.txt
     - pylint ./app
 
-      
+
 deploy_to_staging:
   stage:
     deploy_to_staging
