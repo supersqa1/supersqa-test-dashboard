@@ -1,8 +1,18 @@
 
 stages:
+  - pre_deploy
   - deploy_to_staging
   - tests_on_staging
   - deploy_to_prod
+
+code_quality:
+  stage:
+    pre_deploy
+  image: python:3.11
+
+  script:
+    - pip3 install -r ./requirements.txt
+    - pylint ./app --recursive=true -E
 
 
 deploy_to_staging:
@@ -42,8 +52,18 @@ deploy_to_prod:
       when: always
       allow_failure: false
 
+uat_automation:
+  stage:
+    tests_on_staging
+  image: python:3.11
+  services:
+    - selenium/standalone-firefox
+  script:
+    - echo "ABC"
+    - pip3 install -r ./uat_automation/requirements.txt
+    - pytest -m healthcheck ./uat_automation/tests
 
-      #my_job_2:
+  #my_job_2:
 #  stage:
 #    secondStage
 #  script:
