@@ -28,6 +28,7 @@ deploy_to_staging:
     - echo "job 1"
     - ls
     - chmod 400 ${DRP3_KEY}
+    - ssh -o StrictHostKeyChecking=no -i ${DRP3_KEY} "make dir -p ${APP_DIR}/${ENVIRONMENT}/
     - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:${APP_DIR}/${ENVIRONMENT}/
     - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:${APP_DIR}/${ENVIRONMENT}/
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv ${APP_DIR}/${ENVIRONMENT}/venv_dashboard"
