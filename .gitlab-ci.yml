@@ -16,6 +16,7 @@ code_quality:
   script:
     - pip3 install -r ./requirements.txt
     - pylint ./app --recursive=true -E
+    - echo $CI_PIPELINE_SOURCE
 
 
 deploy_to_staging:
