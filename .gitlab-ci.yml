@@ -5,6 +5,9 @@ stages:
   - tests_on_staging
   - deploy_to_prod
 
+variables:
+  APP_DIR: /root/projects/automation_dashboard
+
 code_quality:
   stage:
     pre_deploy
@@ -19,17 +22,17 @@ deploy_to_staging:
   stage:
     deploy_to_staging
   variables:
-    APP_ROOT_DIR: /root/projects/automation_dashboard/staging
+    ENVIRONMENT: staging
 
   script:
     - echo "job 1"
     - ls
     - chmod 400 ${DRP3_KEY}
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:${APP_ROOT_DIR}
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:${APP_ROOT_DIR}
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv ${APP_ROOT_DIR}/venv_dashboard"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "${APP_ROOT_DIR}/venv_dashboard/bin/python -m pip install -r ${APP_ROOT_DIR}/requirements.txt"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd ${APP_ROOT_DIR}/app && ${APP_ROOT_DIR}/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 app:app --daemon --reload"
+    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:${APP_DIR}/${ENVIRONMENT}/
+    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:${APP_DIR}/${ENVIRONMENT}/
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv ${APP_DIR}/${ENVIRONMENT}/venv_dashboard"
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "${APP_DIR}/${ENVIRONMENT}/venv_dashboard/bin/python -m pip install -r ${APP_DIR}/${ENVIRONMENT}/requirements.txt"
+    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd ${APP_DIR}/${ENVIRONMENT}/app && ${APP_DIR}/${ENVIRONMENT}/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 app:app --daemon --reload"
 #    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "venv_dashboard/bin/python /root/projects/automation_dashboard/app/app.py"
 #    - ssh -i $DRP3_KEY "root@198.199.111.109 "python3 /root/projects/automation_dashboard/app/app.py"
 #    - scp -r ./app ${DASHBOARD_USER}@${DASHBOARD_HOST}:/

@@ -1,0 +1,2 @@
+
+* firs run copy everything to full path not saving the path in variable
