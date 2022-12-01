@@ -9,7 +9,10 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
       when: never
-      
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+      when: always
+
+#  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
 variables:
   APP_DIR: /root/projects/automation_dashboard
 
@@ -63,7 +66,7 @@ deploy_to_prod:
       when: always
       allow_failure: false
 
-uat_automation:
+uat_automation_on_stage:
   stage:
     tests_on_staging
   image: python:3.11
