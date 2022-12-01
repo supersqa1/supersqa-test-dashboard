@@ -15,31 +15,27 @@ stages:
 #  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
 
 variables:
+  PY_IMAGE: python:3.11
   APP_DIR: /root/projects/automation_dashboard
 
 code_quality:
   stage:
     pre_deploy
-  image: python:3.11
-
+  image: $PY_IMAGE
   script:
-#    - pip3 install -r ./requirements.txt
-#    - pylint ./app --recursive=true -E
-    - echo $CI_PIPELINE_SOURCE
-    - echo $CI_COMMIT_BRANCH
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - pip3 install pylint
+    - pylint ./app --recursive=true -E
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
       allow_failure: false
-#    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
-#      when: always
+
+
 deploy_to_staging:
   stage:
     deploy_to_staging
   variables:
     ENVIRONMENT: staging
-
   script:
     - echo "job 1"
     - ls
@@ -51,10 +47,10 @@ deploy_to_staging:
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "${APP_DIR}/${ENVIRONMENT}/venv_dashboard/bin/python -m pip install -r ${APP_DIR}/${ENVIRONMENT}/requirements.txt"
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd ${APP_DIR}/${ENVIRONMENT}/app && ${APP_DIR}/${ENVIRONMENT}/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 app:app --daemon --reload"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
+      allow_failure: false
+
 
 deploy_to_prod:
   stage:
@@ -69,7 +65,6 @@ deploy_to_prod:
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv /root/projects/automation_dashboard/venv_dashboard"
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "/root/projects/automation_dashboard/venv_dashboard/bin/python -m pip install -r /root/projects/automation_dashboard/requirements.txt"
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd /root/projects/automation_dashboard/app && /root/projects/automation_dashboard/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9098 app:app --daemon --reload"
-
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: always
@@ -78,7 +73,7 @@ deploy_to_prod:
 uat_automation_on_stage:
   stage:
     tests_on_staging
-  image: python:3.11
+  image: $PY_IMAGE
   services:
     - selenium/standalone-firefox
   script:
@@ -86,10 +81,6 @@ uat_automation_on_stage:
     - pip3 install -r ./uat_automation/requirements.txt
     - pytest -m healthcheck ./uat_automation/tests
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
-  #my_job_2:
-#  stage:
-#    secondStage
-#  script:
-#    - echo "foo bar"
+      allow_failure: false
