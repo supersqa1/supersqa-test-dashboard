@@ -26,10 +26,11 @@ code_quality:
     - pip3 install -r ./requirements.txt
     - pylint ./app --recursive=true -E
     - echo $CI_PIPELINE_SOURCE
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-      allow_failure: false
+    - echo $CI_COMMIT_BRANCH
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main"'
+#      when: always
+#      allow_failure: false
 #    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
 #      when: always
 deploy_to_staging:
