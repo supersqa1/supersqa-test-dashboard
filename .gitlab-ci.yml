@@ -13,6 +13,7 @@ stages:
 #      when: always
 
 #  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+
 variables:
   APP_DIR: /root/projects/automation_dashboard
 
@@ -26,9 +27,10 @@ code_quality:
     - pylint ./app --recursive=true -E
     - echo $CI_PIPELINE_SOURCE
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+    - if: $CI_MERGE_REQUEST_APPROVED
       when: always
-
+#    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+#      when: always
 deploy_to_staging:
   stage:
     deploy_to_staging
