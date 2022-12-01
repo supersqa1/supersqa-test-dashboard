@@ -23,13 +23,15 @@ code_quality:
   image: python:3.11
 
   script:
-    - pip3 install -r ./requirements.txt
-    - pylint ./app --recursive=true -E
+#    - pip3 install -r ./requirements.txt
+#    - pylint ./app --recursive=true -E
     - echo $CI_PIPELINE_SOURCE
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-      allow_failure: false
+    - echo $CI_COMMIT_BRANCH
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main"'
+#      when: always
+#      allow_failure: false
 #    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
 #      when: always
 deploy_to_staging:
