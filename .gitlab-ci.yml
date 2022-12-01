@@ -28,7 +28,6 @@ code_quality:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
-      allow_failure: false
 
 
 deploy_to_staging:
