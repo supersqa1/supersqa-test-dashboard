@@ -9,7 +9,8 @@ stages:
 #  rules:
 #    - if: '$CI_PIPELINE_SOURCE == "push"'
 #      when: never
-
+#    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+#      when: always
 
 #  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
 variables:
@@ -47,6 +48,8 @@ deploy_to_staging:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
       when: never
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+      when: always
 
 deploy_to_prod:
   stage:
