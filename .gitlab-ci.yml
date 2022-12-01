@@ -28,10 +28,10 @@ code_quality:
     - echo $CI_PIPELINE_SOURCE
     - echo $CI_COMMIT_BRANCH
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-#  rules:
-#    - if: '$CI_COMMIT_BRANCH == "main"'
-#      when: always
-#      allow_failure: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: always
+      allow_failure: false
 #    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
 #      when: always
 deploy_to_staging:
