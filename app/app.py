@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/healthcheck', methods=["GET"])
 def healthCheck():
-    return "OK5555-66666"
+    return "OK11111333-99999"
 
 
 
