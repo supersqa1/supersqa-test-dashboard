@@ -80,7 +80,9 @@ uat_automation_on_stage:
     - echo "ABC"
     - pip3 install -r ./uat_automation/requirements.txt
     - pytest -m healthcheck ./uat_automation/tests
-
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+      when: always
   #my_job_2:
 #  stage:
 #    secondStage
