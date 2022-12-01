@@ -5,12 +5,11 @@ stages:
   - tests_on_staging
   - deploy_to_prod
 
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
-      when: always
+#workflow:
+#  rules:
+#    - if: '$CI_PIPELINE_SOURCE == "push"'
+#      when: never
+
 
 #  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
 variables:
@@ -25,7 +24,9 @@ code_quality:
     - pip3 install -r ./requirements.txt
     - pylint ./app --recursive=true -E
     - echo $CI_PIPELINE_SOURCE
-
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
+      when: always
 
 deploy_to_staging:
   stage:
