@@ -1,2 +1,2 @@
 
-export RESULTS_DIR=$(pwd)/automationdashboard/data
+export RESULTS_DIR=$(pwd)/data/results
