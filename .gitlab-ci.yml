@@ -35,8 +35,8 @@ deploy_to_staging:
     deploy_to_staging
   variables:
     ENVIRONMENT: staging
-    VIRTUAL_ENVIRONMENT: ${APP_DIR}/${ENVIRONMENT}/venv_dashboard
     APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
+    VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
   script:
     - echo "job 1"
     - ls
@@ -47,10 +47,10 @@ deploy_to_staging:
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv ${VIRTUAL_ENVIRONMENT}"
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "${VIRTUAL_ENVIRONMENT}/bin/python -m pip install -r ${APP_INSTANCE_DIR}/requirements.txt"
     - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd ${APP_INSTANCE_DIR}/automationdashboard && export PYTHONPATH=${APP_INSTANCE_DIR} && source variables.sh && ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 automationdashboard:app --daemon --reload"
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
-      when: always
-      allow_failure: false
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "develop"'
+#      when: always
+#      allow_failure: false
 
 
 deploy_to_prod:
