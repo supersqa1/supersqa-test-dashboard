@@ -5,5 +5,5 @@ app = Flask(__name__)
 
 
 
-from views import post_results
-from views import views
+from automationdashboard.views import post_results
+from automationdashboard.views import views
