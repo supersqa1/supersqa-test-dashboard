@@ -59,7 +59,7 @@ deploy_to_prod:
   stage:
     deploy_to_prod
   variables:
-    ENVIRONMENT: staging
+    ENVIRONMENT: prod
     APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
     VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
   script:
