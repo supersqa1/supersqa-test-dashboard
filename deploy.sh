@@ -1,3 +1,5 @@
+set -x
+
 chmod 400 ${DRP3_KEY}
 ssh -o StrictHostKeyChecking=no -i ${DRP3_KEY} "root@198.199.111.109" "mkdir -p ${APP_INSTANCE_DIR}"
 scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./automationdashboard root@198.199.111.109:${APP_INSTANCE_DIR}
