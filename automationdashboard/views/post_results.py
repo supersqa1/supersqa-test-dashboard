@@ -1,7 +1,8 @@
 from flask import jsonify, request
 
 from automationdashboard import app
-from automationdashboard.src.test_results import TestResults
+from automationdashboard.src.test_result import TestResult
+from automationdashboard.src.test_results_processor import TestResultsProcessor
 
 
 
@@ -17,9 +18,31 @@ def post_result():
 
     data = request.get_json()
 
-    results_helper = TestResults()
-    results_helper.store_report_in_file(data)
-    results_helper.get_all_reports_in_directory()
+    try:
+
+        tr = TestResult(
+            start_time=data['startDateTime'],
+            end_time=data['endDateTime'],
+            number_of_passed_tests=data['numberOfTestCasesPassed'],
+            number_of_failed_tests=data['numberOfTestCasesFailed'],
+            test_group_name=data['testGroupName'],
+            result_status=data['resultStatus']
+        )
+
+
+    except KeyError as e:
+        return jsonify({"error": f"Missing the '{e.args[0]}' key from payload."}), 400
+    except ValueError as e:
+        return jsonify({"error": e.args}), 400
+
+        import pdb; pdb.set_trace()
+        print('aaa')
+
+    results_processor = TestResultsProcessor()
+    # results_processor.store_report_in_file(tr)
+    results_processor.store_test_result_in_db(tr)
+
+    results_processor.get_all_reports_in_directory()
 
     return jsonify(data)
 
