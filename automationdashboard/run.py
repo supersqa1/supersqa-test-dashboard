@@ -1,7 +1,6 @@
 
+
 from automationdashboard import app
-
-
 
 
 

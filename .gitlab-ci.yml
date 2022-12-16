@@ -35,18 +35,14 @@ deploy_to_staging:
     deploy_to_staging
   variables:
     ENVIRONMENT: staging
-    VIRTUAL_ENVIRONMENT: ${APP_DIR}/${ENVIRONMENT}/venv_dashboard
     APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
+    VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
+    PORT: 9099
   script:
     - echo "job 1"
     - ls
-    - chmod 400 ${DRP3_KEY}
-    - ssh -o StrictHostKeyChecking=no -i ${DRP3_KEY} "root@198.199.111.109" "mkdir -p ${APP_INSTANCE_DIR}"
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./automationdashboard root@198.199.111.109:${APP_INSTANCE_DIR}
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:${APP_INSTANCE_DIR}
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv ${VIRTUAL_ENVIRONMENT}"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "${VIRTUAL_ENVIRONMENT}/bin/python -m pip install -r ${APP_INSTANCE_DIR}/requirements.txt"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd ${APP_INSTANCE_DIR}/automationdashboard $$ export PYTHONPATH=${APP_INSTANCE_DIR} && source variables.sh && ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9099 automationdashboard:app --daemon --reload"
+    - pwd
+    - bash deploy.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
@@ -56,16 +52,15 @@ deploy_to_staging:
 deploy_to_prod:
   stage:
     deploy_to_prod
+  variables:
+    ENVIRONMENT: prod
+    APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
+    VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
+    PORT: 9098
   script:
     - echo "job 1"
     - ls
-    - ls
-    - chmod 400 ${DRP3_KEY}
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./app root@198.199.111.109:/root/projects/automation_dashboard/
-    - scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt root@198.199.111.109:/root/projects/automation_dashboard/
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "python3 -m venv /root/projects/automation_dashboard/venv_dashboard"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "/root/projects/automation_dashboard/venv_dashboard/bin/python -m pip install -r /root/projects/automation_dashboard/requirements.txt"
-    - ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "root@198.199.111.109" "cd /root/projects/automation_dashboard/app && /root/projects/automation_dashboard/venv_dashboard/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:9098 app:app --daemon --reload"
+    - bash deploy.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: always
