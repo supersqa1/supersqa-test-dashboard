@@ -1,17 +1,14 @@
 
 
-from flask import Flask, request
+from automationdashboard import app
 
 
-app = Flask(__name__)
 
 
 
 @app.route('/healthcheck', methods=["GET"])
 def healthCheck():
-    return "OK11111333-99999"
-
-
+    return "OK"
 
 
 if __name__ == '__main__':
