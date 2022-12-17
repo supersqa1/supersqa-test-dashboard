@@ -64,10 +64,10 @@ deploy_to_prod:
     - echo "job 1"
     - ls
     - bash deploy.sh
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-      allow_failure: false
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main"'
+#      when: always
+#      allow_failure: false
 
 uat_automation_on_stage:
   stage:
