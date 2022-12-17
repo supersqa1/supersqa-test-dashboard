@@ -44,13 +44,13 @@ deploy_to_staging:
     - pwd
     - bash deploy.sh
     - env
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
-      when: always
-      allow_failure: false
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-      allow_failure: false
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "develop"'
+#      when: always
+#      allow_failure: false
+#    - if: '$CI_COMMIT_BRANCH == "main"'
+#      when: always
+#      allow_failure: false
 
 deploy_to_prod:
   stage:

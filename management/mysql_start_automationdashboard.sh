@@ -1,7 +1,8 @@
 set -x
 
 
-mysql_volume_path="/root/projects/automation_dashboard/$1/mysql_volume"
+
+mysql_volume_path="/root/database_volumes/$1/mysql_volume"
 PORT=$2
 IMAGE_ID=$3
 
