@@ -6,7 +6,6 @@ set -x
 IP=198.199.111.109
 REMOTE_USER=root
 
-STAGING_DB_HOST=foobar
 
 # database info
 if [ ${ENVIRONMENT} == 'staging' ]; then
