@@ -41,7 +41,7 @@ class TestResultsProcessor:
         return data
 
     def store_report(self, result_object):
-      
+
         if self.data_storage == 'database':
             self.store_test_result_in_db(result_object)
         elif self.data_storage == 'file':
