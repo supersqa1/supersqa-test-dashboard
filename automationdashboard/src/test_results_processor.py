@@ -1,21 +1,53 @@
 
 
+from automationdashboard import app
+from automationdashboard.dao.test_results_dao import TestResultsDAO
+
+
 import json
 import logging
 import os
 from datetime import datetime
 
 
-class TestResults:
+
+
+
+class TestResultsProcessor:
 
     def __init__(self):
+        self.data_storage = app.config.get("DATA_STORAGE")
+        assert self.data_storage and self.data_storage.lower() in ('database', 'file'), \
+            f"Invalid value '{self.data_storage}' for config 'DATA_STORAGE'. Valid values are 'database' or 'file'."
 
-        self.results_dir = os.environ.get("RESULTS_DIR")
-        if not self.results_dir:
-            raise Exception("Env variable 'RESULTS_DIR' must be set.")
+        self.data_storage = self.data_storage.lower()
+        if self.data_storage == 'file':
+            self.results_dir = app.config.get("RESULTS_DIR")
+            if not self.results_dir:
+                raise Exception("Config key 'RESULTS_DIR' must be set.")
+
+    @staticmethod
+    def convert_result_object_to_dict(result_object): # should this be called serialize
+
+        data = dict()
+        data['start_time'] = result_object.start_time
+        data['end_time'] = result_object.end_time
+        data['number_of_failed_tests'] = result_object.number_of_failed_tests
+        data['number_of_passed_tests'] = result_object.number_of_passed_tests
+        data['result_status'] = result_object.result_status
+        data['test_group_name'] = result_object.test_group_name
 
 
-    def store_report_in_file(self, report_data):
+        return data
+
+    def store_report(self, result_object):
+
+        if self.data_storage == 'database':
+            self.store_test_result_in_db(result_object)
+        elif self.data_storage == 'file':
+            self.store_report_in_file(result_object)
+
+    def store_report_in_file(self, result_object):
         """
         Creates a .json file and aves the report data in the file.
         Uses the current datetime as file name
@@ -23,7 +55,7 @@ class TestResults:
         :param report_data: must be a dictionary or json object
         :return: None
         """
-
+        report_data = self.convert_result_object_to_dict(result_object)
         # Check if the folder exist
         is_exist = os.path.exists(self.results_dir) and os.path.isdir(self.results_dir)
         if not is_exist:
@@ -35,6 +67,9 @@ class TestResults:
         with open(result_file_path, 'w') as f:
             f.write(json.dumps(report_data))
 
+    def store_test_result_in_db(self, test_result_object):
+
+        TestResultsDAO().insert_test_result(test_result_object)
 
     def get_all_reports_in_directory(self):
         """
@@ -51,9 +86,15 @@ class TestResults:
         for report_file in all_files:
             if report_file.endswith('.json'):
                 f_name = os.path.join(self.results_dir, report_file)
+            try:
                 with open(f_name, 'r') as f:
                     data = json.load(f)
-                all_files_content.append(data)
+                    # TODO: why does this fail if file is empty
+            except Exception as e:
+                logging.error(e)
+
+            all_files_content.append(data)
+
         return all_files_content
 
     def get_latest_result_details(self, results_list):
@@ -70,14 +111,14 @@ class TestResults:
         latest = datetime.min  # initialize oldest datetime
         latest_info = {}
         for i in results_list:
-            start_datetime_obj = datetime.strptime(i['startDateTime'], "%Y-%m-%d %H:%M:%S")
+            start_datetime_obj = datetime.strptime(str(i['start_time']), "%Y-%m-%d %H:%M:%S")
             if start_datetime_obj > latest:
-                latest = datetime.strptime(i['startDateTime'], "%Y-%m-%d %H:%M:%S")
-                latest_info['latest_status'] = i['resultStatus']
-                latest_info['latest_pass'] = i['numberOfTestCasesPassed']
-                latest_info['latest_fail'] = i['numberOfTestCasesFailed']
-                latest_info['total'] = int(i['numberOfTestCasesPassed']) + int(i['numberOfTestCasesFailed'])
-                latest_info['pct_pass'] = round(int(i['numberOfTestCasesPassed'])/latest_info['total'] * 100, )
+                latest = datetime.strptime(str(i['start_time']), "%Y-%m-%d %H:%M:%S")
+                latest_info['latest_status'] = i['result_status']
+                latest_info['latest_pass'] = i['number_of_passed_tests']
+                latest_info['latest_fail'] = i['number_of_failed_tests']
+                latest_info['total'] = int(i['number_of_passed_tests']) + int(i['number_of_failed_tests'])
+                latest_info['pct_pass'] = round(int(i['number_of_passed_tests'])/latest_info['total'] * 100, )
 
         return latest_info
 
@@ -139,23 +180,37 @@ class TestResults:
 
 
         logging.info("Creating formatted data from all available report files.")
-        results = self.get_all_reports_in_directory()
+
+        data_storage = app.config.get("DATA_STORAGE")
+
+        if data_storage.lower() == 'database':
+            results = TestResultsDAO().get_all_test_results_from_db()
+        elif data_storage.lower() == 'file':
+            results = self.get_all_reports_in_directory()
+        else:
+            raise Exception(f"Invalid value '{data_storage}' for config 'DATA_STORAGE'. Valid values are 'database' or 'file'.")
+
+        formatted_results = self.format_data_for_fe(results)
+
+        return formatted_results
+
+    def format_data_for_fe(self, results):
 
         all_tests = {}
         for result in results:
-            group_name = result['testGroupName']
+            group_name = result['test_group_name']
             if group_name in all_tests.keys():
                 all_tests[group_name]["runs"].append(result)
             else:
                 all_tests[group_name] = {"name": group_name, "runs": [result], "pass_fail": "IDK"}
 
-        # get more detail on each test group
+            # get more detail on each test group
         for group_name, details in all_tests.items():
             runs = details['runs']
             more_detail = self.get_latest_result_details(runs)
             details.update(more_detail)
 
-        # create a list of list, with each list containing X test groups. Each list will be a row in the UI
+            # create a list of list, with each list containing X test groups. Each list will be a row in the UI
         final_data = []
         tmp = []
         for key, value in all_tests.items():
@@ -169,3 +224,9 @@ class TestResults:
             final_data.append(tmp)
 
         return final_data
+
+    def get_data_from_db(self):
+        results = TestResultsDAO().get_all_test_results_from_db()
+        formatted_results = self.format_data_for_fe(results)
+        return formatted_results
+
