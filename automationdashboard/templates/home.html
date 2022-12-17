@@ -37,8 +37,8 @@
                                     </button>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="myModal_{{ details['name'].replace(' ', '_') }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                <div class="modal modal-lg fade" id="myModal_{{ details['name'].replace(' ', '_') }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog"  style="width: 50%;">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">{{ details['name'] }}</h5>
@@ -46,11 +46,25 @@
                                             </div>
                                             <div class="modal-body">
                                                 <table class="table">
-                                                    <tr><th>start_time</th><th>end_time</th><th>status</th><th>Link</th><th>status</th><th>status</th><th>status</th></tr>
+                                                    <tr>
+                                                        <th>start_time</th>
+                                                        <th>end_time</th>
+                                                        <th>status</th>
+                                                        <th>PASSED QTY</th>
+                                                        <th>FAILED QTY</th>
+                                                        <th>PASSED PCT</th>
+
+                                                    </tr>
 
                                                     {% for run in details["runs"] %}
+
                                                     <tr>
-                                                        <td>{{ run.get('startTime') }}</td><td>{{ run.get('endTime') }}</td><td>{{ run.get('result') }}</td>
+                                                        <td>{{ run.get('start_time') }}</td>
+                                                        <td>{{ run.get('end_time') }}</td>
+                                                        <td style="color: {{ 'green'  if run.get('result_status') == 'PASS' else 'red' }}"><strong>{{ run.get('result_status') }}</strong></td>
+                                                        <td>{{ run.get('number_of_passed_tests') }}</td>
+                                                        <td>{{ run.get('number_of_failed_tests') }}</td>
+                                                        <td>{{ ((run.get('number_of_passed_tests')/ (run.get('number_of_passed_tests') + run.get('number_of_failed_tests')) ) * 100) | round(0) | int }} %</td>
                                                     </tr>
                                                     {% endfor %}
                                                 </table>

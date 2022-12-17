@@ -63,7 +63,13 @@ class TestResultsDAO:
         sql = "SELECT * FROM automationdashboard.test_results;"
         rs_sql = DBHelper().select(sql)
 
-        return rs_sql
+        data = []
+        for i in rs_sql:
+            i.update({'start_time': str(i['start_time'])})
+            i.update({'end_time': str(i['end_time'])})
+            data.append(i)
+
+        return data
 
 
     def insert_test_result(self, result_object):
