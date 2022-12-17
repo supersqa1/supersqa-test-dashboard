@@ -40,9 +40,9 @@ class TestResultsProcessor:
         data_storage = app.config.get("DATA_STORAGE")
 
         if data_storage.lower() == 'database':
-            TestResultsDAO().store_test_result_in_db(result_object)
+            self.store_test_result_in_db(result_object)
         elif data_storage.lower() == 'file':
-            self.store_report_in_file()
+            self.store_report_in_file(result_object)
         else:
             raise Exception(f"Invalid value '{data_storage}' for config 'DATA_STORAGE'. Valid values are 'database' or 'file'.")
 
@@ -69,6 +69,7 @@ class TestResultsProcessor:
     def store_test_result_in_db(self, test_result_object):
 
         TestResultsDAO().insert_test_result(test_result_object)
+
     def get_all_reports_in_directory(self):
         """
         Gets all the available result files in the results folder.
