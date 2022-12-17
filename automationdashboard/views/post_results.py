@@ -39,10 +39,8 @@ def post_result():
         print('aaa')
 
     results_processor = TestResultsProcessor()
-    # results_processor.store_report_in_file(tr)
-    results_processor.store_test_result_in_db(tr)
+    results_processor.store_report(tr)
 
-    results_processor.get_all_reports_in_directory()
 
     return jsonify(data)
 

@@ -4,7 +4,7 @@ import pymysql
 
 class DBHelper:
 
-    def __init__(self, ):
+    def __init__(self):
 
         self.host = app.config['DB_HOST']
         self.user = app.config['DB_USER']
