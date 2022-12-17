@@ -13,4 +13,8 @@ scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./automationdashboard $REMOTE_
 scp -o StrictHostKeyChecking=no -i ${DRP3_KEY} -r ./requirements.txt $REMOTE_USER@$IP:${APP_INSTANCE_DIR}
 ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_USER@$IP" "python3 -m venv ${VIRTUAL_ENVIRONMENT}"
 ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_USER@$IP" "${VIRTUAL_ENVIRONMENT}/bin/python -m pip install -r ${APP_INSTANCE_DIR}/requirements.txt"
-ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_USER@$IP" "cd ${APP_INSTANCE_DIR}/automationdashboard && export PYTHONPATH=${APP_INSTANCE_DIR} && source variables.sh && ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:${PORT} automationdashboard:app --daemon --reload"
+ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_USER@$IP" "cd ${APP_INSTANCE_DIR}/automationdashboard \
+&& export PYTHONPATH=${APP_INSTANCE_DIR} \
+&& export ENVIRONMENT=${ENVIRONMENT} \
+&& source variables.sh \
+&& ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:${PORT} automationdashboard:app --daemon --reload"
