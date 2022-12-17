@@ -1,6 +1,6 @@
 set -x
 
-# Deploys the application to the provided ip address
+# Deploys the application to the provided ip address (Ubuntu server on digitalocean (VPS))
 # Expects certain variables to be set
 
 IP=198.199.111.109
