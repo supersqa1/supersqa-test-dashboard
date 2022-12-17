@@ -16,10 +16,15 @@ from datetime import datetime
 class TestResultsProcessor:
 
     def __init__(self):
+        self.data_storage = app.config.get("DATA_STORAGE")
+        assert self.data_storage and self.data_storage.lower() in ('database', 'file'), \
+            f"Invalid value '{self.data_storage}' for config 'DATA_STORAGE'. Valid values are 'database' or 'file'."
 
-        self.results_dir = app.config.get("RESULTS_DIR")
-        if not self.results_dir:
-            raise Exception("Config key 'RESULTS_DIR' must be set.")
+        self.data_storage = self.data_storage.lower()
+        if self.data_storage == 'file':
+            self.results_dir = app.config.get("RESULTS_DIR")
+            if not self.results_dir:
+                raise Exception("Config key 'RESULTS_DIR' must be set.")
 
     @staticmethod
     def convert_result_object_to_dict(result_object): # should this be called serialize
@@ -37,14 +42,10 @@ class TestResultsProcessor:
 
     def store_report(self, result_object):
 
-        data_storage = app.config.get("DATA_STORAGE")
-
-        if data_storage.lower() == 'database':
+        if self.data_storage == 'database':
             self.store_test_result_in_db(result_object)
-        elif data_storage.lower() == 'file':
+        elif self.data_storage == 'file':
             self.store_report_in_file(result_object)
-        else:
-            raise Exception(f"Invalid value '{data_storage}' for config 'DATA_STORAGE'. Valid values are 'database' or 'file'.")
 
     def store_report_in_file(self, result_object):
         """
