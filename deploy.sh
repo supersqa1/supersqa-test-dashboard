@@ -41,4 +41,4 @@ ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_USER@$IP" "cd ${APP_INSTAN
 && export DB_USER=${DB_USER} \
 && export DB_PASSWORD=${DB_PASSWORD} \
 && source variables.sh \
-&& ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:${PORT} automationdashboard:app --daemon --reload"
+&& ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:${PORT} automationdashboard:app --daemon --reload" && env
