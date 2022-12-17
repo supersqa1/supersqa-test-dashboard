@@ -7,8 +7,8 @@ app = Flask(__name__)
 # set configs
 app.config['DATA_STORAGE'] = "database"  # Options are 'database' or 'file'.
 
-
-app.config['RESULTS_DIR'] = os.environ.get("RESULTS_DIR")
+if app.config['DATA_STORAGE'] == 'file':
+    app.config['RESULTS_DIR'] = os.environ.get("RESULTS_DIR")
 
 
 
