@@ -20,7 +20,6 @@ app.config['DB_PORT'] = os.environ.get("DB_PORT")
 
 
 
-
-
+from automationdashboard.views import get_results
 from automationdashboard.views import post_results
 from automationdashboard.views import views

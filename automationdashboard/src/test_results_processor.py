@@ -230,3 +230,6 @@ class TestResultsProcessor:
         formatted_results = self.format_data_for_fe(results)
         return formatted_results
 
+    def get_test_result_by_group_name(self, test_group_name, start_time=None, end_time=None):
+
+        return TestResultsDAO().get_test_results_by_test_group(test_group_name, start_time=start_time, end_time=end_time)
