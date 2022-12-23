@@ -1,0 +1,11 @@
+
+
+Branch: release/0.01
+
+* Using files to store the test results
+* One file per result.
+* The file format is .json
+* Storing the files in same location are the app code is located
+* The folder to store the files is set as environment variable which then will be set as config value
+
+

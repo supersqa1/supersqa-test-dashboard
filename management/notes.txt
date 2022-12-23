@@ -1,14 +1,14 @@
 
-- SQL to create databases and tables for the aplication are found in automationdashboard/management/sql
+- SQL to create databases and tables for the application are found in automationdashboard/management/sql
 
 - Database Information
     - Running database with docker on the same host
-    - Using different instance of mysql (different) container for 'stagin' and 'prod' environments
-    - Script to run databases is located 'automationdashboard/management/sql'
+    - Using different instance of mysql (different) container for 'staging' and 'prod' environments
+    - Script to run databases is located 'automationdashboard/management'
         - script name: mysql_start_automationdashboard.sh
-        - port, environment, and image_id are required parameters. The 'environmnt' parameter is used to create a folder for database volume.
+        - port, environment, and image_id are required parameters. The 'environment' parameter is used to create a folder for database volume.
         - Environment variable 'MYSQL_ROOT_PASSWORD' must be set
         - Example command: $ bash mysql_start_automationdashboard.sh prod 3308 7484689f290f
         - Example of what the actual command in the script:
             -- $ docker run --restart unless-stopped -d --name mysql_prod_automationdashboard -v /root/projects/automation_dashboard/prod/mysql_volume=/var/lib/mysql -e MYSQL_ROOT_PASSWORD=yemukeranew -p 3308:3306 7484689f290f
-        - port and environment are required parameters. The 'environmnt' parameter is used to create a folder for database volume.
+        - port and environment are required parameters. The 'environment' parameter is used to create a folder for database volume.
