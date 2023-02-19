@@ -5,14 +5,6 @@ stages:
   - tests_on_staging
   - deploy_to_prod
 
-#workflow:
-#  rules:
-#    - if: '$CI_PIPELINE_SOURCE == "push"'
-#      when: never
-#    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_MERGE_REQUEST_APPROVED'
-#      when: always
-
-#  CI_MERGE_REQUEST_TARGET_BRANCH_NAME
 
 variables:
   PY_IMAGE: python:3.11
@@ -52,6 +44,8 @@ deploy_to_staging:
       when: always
       allow_failure: false
 
+
+
 deploy_to_prod:
   stage:
     deploy_to_prod
@@ -68,6 +62,7 @@ deploy_to_prod:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: always
       allow_failure: false
+
 
 uat_automation_on_stage:
   stage:

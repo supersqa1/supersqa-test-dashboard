@@ -1,7 +1,10 @@
 set -x
 
+# Example Command:
+  # $ bash mysql_start_automationdashboard.sh prod 3308 7484689f290f
 
-mysql_volume_path="/root/projects/automation_dashboard/$1/mysql_volume"
+
+mysql_volume_path="/root/database_volumes/$1/mysql_volume"
 PORT=$2
 IMAGE_ID=$3
 

@@ -1,6 +1,7 @@
+import pymysql
 
 from automationdashboard import app
-import pymysql
+
 
 class DBHelper:
 
@@ -63,8 +64,35 @@ class TestResultsDAO:
         sql = "SELECT * FROM automationdashboard.test_results;"
         rs_sql = DBHelper().select(sql)
 
-        return rs_sql
+        data = []
+        for i in rs_sql:
+            i.update({'start_time': str(i['start_time'])})
+            i.update({'end_time': str(i['end_time'])})
+            data.append(i)
 
+        return data
+
+    def get_test_results_by_test_group(self, test_group_name, start_time=None, end_time=None):
+
+        filters = ""
+        if start_time:
+            filters = filters + f" AND start_time = '{start_time}'"
+        if end_time:
+            filters = f" AND end_time = '{end_time}'"
+
+        sql = f"SELECT * FROM automationdashboard.test_results WHERE test_group_name = '{test_group_name}' " + filters + ";"
+        app.logger.info(sql)
+        # import pdb; pdb.set_trace()
+        rs_sql = DBHelper().select(sql)
+
+        data = []
+        for i in rs_sql:
+            i.update({'start_time': str(i['start_time'])})
+            i.update({'end_time': str(i['end_time'])})
+            data.append(i)
+
+
+        return data
 
     def insert_test_result(self, result_object):
         data = dict()
