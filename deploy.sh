@@ -3,7 +3,8 @@ set -x
 # Deploys the application to the provided ip address (Ubuntu server on digitalocean (VPS))
 # Expects certain variables to be set
 
-IP=198.199.111.109
+
+IP=$REMOTE_HOST_IP
 REMOTE_SSH_USER=root
 
 
