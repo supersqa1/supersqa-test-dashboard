@@ -79,7 +79,7 @@ class TestResultsProcessor:
 
         :return: a list of dictionaries. Each dictionary is a result.
         """
-
+        print("Just a dummy print line")
         all_files = os.listdir(self.results_dir)
 
         all_files_content = []
