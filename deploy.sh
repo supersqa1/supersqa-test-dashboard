@@ -36,6 +36,7 @@ ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_SSH_USER@$IP" "python3 -m 
 ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_SSH_USER@$IP" "${VIRTUAL_ENVIRONMENT}/bin/python -m pip install -r ${APP_INSTANCE_DIR}/requirements.txt"
 ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_SSH_USER@$IP" "cd ${APP_INSTANCE_DIR}/automationdashboard \
 && export PYTHONPATH=${APP_INSTANCE_DIR} \
+&& export APP_INSTANCE_DIR=${APP_INSTANCE_DIR} \
 && export ENVIRONMENT=${ENVIRONMENT} \
 && export DB_HOST=${DB_HOST} \
 && export DB_PORT=${DB_PORT} \
