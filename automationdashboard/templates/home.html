@@ -64,7 +64,13 @@
                                                         <td style="color: {{ 'green'  if run.get('result_status') == 'PASS' else 'red' }}"><strong>{{ run.get('result_status') }}</strong></td>
                                                         <td>{{ run.get('number_of_passed_tests') }}</td>
                                                         <td>{{ run.get('number_of_failed_tests') }}</td>
-                                                        <td>{{ ((run.get('number_of_passed_tests')/ (run.get('number_of_passed_tests') + run.get('number_of_failed_tests')) ) * 100) | round(0) | int }} %</td>
+                                                        <td>
+                                                          {% set passed = run.get('number_of_passed_tests', 0) %}
+                                                          {% set failed = run.get('number_of_failed_tests', 0) %}
+                                                          {% set total = passed + failed %}
+                                                          {{ ((passed / total) * 100) | round(0) | int if total > 0 else 0 }} %
+                                                        </td>
+
                                                     </tr>
                                                     {% endfor %}
                                                 </table>
