@@ -121,7 +121,7 @@ class TestResultsProcessor:
                 try:
                     latest_info['pct_pass'] = round(int(i['number_of_passed_tests'])/latest_info['total'] * 100, )
                 except:
-                    latest_info['pct_pass'] = "ZeroDivisionError"
+                    latest_info['pct_pass'] = 0
         return latest_info
 
 
