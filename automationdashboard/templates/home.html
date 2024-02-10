@@ -27,7 +27,7 @@
                         <div class="accordion" id="a" >
                             <div class="accordion-item">
 
-                                    <button style="min-height: 200px; background: {{ 'green'  if details['latest_status'] == 'PASS' else 'yellow' }}" class="accordion-button collapsed" type="button" data-bs-toggle="modal" data-bs-target="#myModal_{{ details['name'].replace(' ', '_') }}" aria-expanded="true" aria-controls="collapseOne_{{ details['name'].replace(' ', '_') }}">
+                                    <button style="min-height: 200px; background: {{ 'green'  if details['latest_status'] == 'PASS' else 'red' }}" class="accordion-button collapsed" type="button" data-bs-toggle="modal" data-bs-target="#myModal_{{ details['name'].replace(' ', '_') }}" aria-expanded="true" aria-controls="collapseOne_{{ details['name'].replace(' ', '_') }}">
                                         <div>
                                             <h1>{{ details['name'] }}</h1>
                                             Last Run: <strong>{{ details["latest_status"] }}</strong> <br>

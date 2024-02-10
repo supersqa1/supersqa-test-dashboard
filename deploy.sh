@@ -44,4 +44,12 @@ ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_SSH_USER@$IP" "cd ${APP_IN
 && source variables.sh \
 && sleep 5 \
 && env \
-&& ${VIRTUAL_ENVIRONMENT}/bin/python -m gunicorn --workers 1 --bind 127.0.0.1:${PORT} automationdashboard:app --daemon --reload" && env
+&& ${VIRTUAL_ENVIRONMENT}/bin/python \
+-m gunicorn \
+--workers 1 \
+--bind 127.0.0.1:${PORT} \
+automationdashboard:app \
+--daemon \
+--reload \
+--access-logfile /var/log/automationdashboard_gunicorn_access.log --error-logfile /var/log/automationdashboard_gunicorn_error.log" \
+&& env
