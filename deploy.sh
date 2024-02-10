@@ -51,5 +51,6 @@ ssh -o StrictHostKeyChecking=no -i $DRP3_KEY "$REMOTE_SSH_USER@$IP" "cd ${APP_IN
 automationdashboard:app \
 --daemon \
 --reload \
---access-logfile /var/log/automationdashboard_gunicorn_access.log --error-logfile /var/log/automationdashboard_gunicorn_error.log" \
+--access-logfile ${APP_INSTANCE_DIR}/logs_automationdashboard_gunicorn_access.log \
+--error-logfile ${APP_INSTANCE_DIR}/logs_automationdashboard_gunicorn_error.log" \
 && env
