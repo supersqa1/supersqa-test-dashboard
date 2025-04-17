@@ -1,0 +1,100 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+env:
+  PY_IMAGE: python:3.11
+  APP_DIR: /root/projects/automation_dashboard
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run pylint
+        run: |
+          pylint ./automationdashboard --recursive=true -E
+
+  deploy_to_staging:
+    needs: code_quality
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      ENVIRONMENT: staging
+      APP_INSTANCE_DIR: ${{ env.APP_DIR }}/staging
+      VIRTUAL_ENVIRONMENT: ${{ env.APP_DIR }}/staging/venv_dashboard
+      PORT: 9099
+      REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      STAGING_DB_HOST: ${{ secrets.STAGING_DB_HOST }}
+      STAGING_DB_PORT: ${{ secrets.STAGING_DB_PORT }}
+      STAGING_DB_USER: ${{ secrets.STAGING_DB_USER }}
+      STAGING_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+      - name: Deploy to staging
+        run: bash deploy.sh
+
+  uat_automation:
+    needs: deploy_to_staging
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container: 
+      image: python:3.11
+    services:
+      selenium:
+        image: selenium/standalone-firefox
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          pip3 install -r ./uat_automation/requirements.txt
+      - name: Run UAT tests
+        run: |
+          pytest -m healthcheck ./uat_automation/tests
+
+  deploy_to_prod:
+    needs: [deploy_to_staging, uat_automation]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      ENVIRONMENT: prod
+      APP_INSTANCE_DIR: ${{ env.APP_DIR }}/prod
+      VIRTUAL_ENVIRONMENT: ${{ env.APP_DIR }}/prod/venv_dashboard
+      PORT: 9098
+      REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+      PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
+      PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+      - name: Deploy to production
+        run: bash deploy.sh 
