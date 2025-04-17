@@ -1,12 +1,29 @@
 # Automation Dashboard 🚀
 
+[![GitLab](https://img.shields.io/badge/GitLab-Repository-orange?logo=gitlab)](https://gitlab.com/yourusername/automationdashboard)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/yourusername/automationdashboard)
+
 A modern, real-time test automation dashboard built with Flask and HTMX, providing a sleek, responsive interface for monitoring test automation results across CI/CD pipelines.
+
+> **Note**: This project is maintained in both GitLab and GitHub as part of an educational initiative to demonstrate CI/CD pipeline implementations across different platforms. The codebase is identical in both repositories, with platform-specific CI/CD configurations.
 
 **Live Demos:**
 - [Production Environment](http://automationdashboard.supersqa.com/)
 - [Staging Environment](http://staging.automationdashboard.supersqa.com/)
 
 ![Dashboard Preview](docs/assets/dashboard.png)
+
+## Repository Information 📚
+
+This project is maintained in both GitLab and GitHub to demonstrate:
+- Different CI/CD pipeline implementations
+- Platform-specific automation capabilities
+- Cross-platform deployment strategies
+- Educational comparison of Git hosting platforms
+
+### Repository Links
+- **GitLab**: [automationdashboard](https://gitlab.com/yourusername/automationdashboard)
+- **GitHub**: [automationdashboard](https://github.com/yourusername/automationdashboard)
 
 ## Features ✨
 
@@ -40,7 +57,12 @@ A modern, real-time test automation dashboard built with Flask and HTMX, providi
 
 ## CI/CD Pipeline 🔄
 
-The GitLab CI/CD pipeline consists of three main stages:
+The project implements CI/CD pipelines on both GitLab and GitHub, showcasing different approaches to automation:
+
+### GitLab CI/CD
+The GitLab pipeline consists of three main stages, with a visual representation of the pipeline flow:
+
+![GitLab Pipeline](docs/assets/gitlab-pipeline.png)
 
 1. **Pre-Deploy**
    ```yaml
@@ -82,13 +104,46 @@ The GitLab CI/CD pipeline consists of three main stages:
    - Deploys to production environment
    - Verifies application health
 
+### GitHub Actions
+The GitHub workflow provides a similar pipeline with a different interface and configuration approach:
+
+![GitHub Actions Pipeline](docs/assets/github-pipeline.png)
+
+```yaml
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
+      - name: Run tests
+        run: |
+          pytest
+```
+
+<div style="padding: 1em; background-color: rgba(0, 123, 255, 0.1); border-left: 4px solid #007bff; margin: 1em 0;">
+💡 **Note**: The screenshots above show the actual pipeline interfaces from both platforms. While the configurations are similar in functionality, the visual representation and workflow management differ between GitLab and GitHub, highlighting the unique features of each platform.
+</div>
+
 ## Infrastructure Architecture 🏗
 
 The application utilizes a cost-effective single VPS setup that hosts both staging and production environments:
 
 ```
                      ┌─────────────────┐
-                     │   GitLab CI/CD  │
+                     │  GitHub Actions │
                      └────────┬────────┘
                              │
                      ┌───────▼────────┐
@@ -115,7 +170,12 @@ The application utilizes a cost-effective single VPS setup that hosts both stagi
 
 1. **Clone the Repository**
    ```bash
+   # From GitLab
+   git clone https://gitlab.com/yourusername/automationdashboard.git
+   
+   # From GitHub
    git clone https://github.com/yourusername/automationdashboard.git
+   
    cd automationdashboard
    ```
 
