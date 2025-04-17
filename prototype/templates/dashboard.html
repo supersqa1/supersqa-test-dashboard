@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
+         hx-get="/api/stats" 
+         hx-trigger="load, every 30s"
+         hx-swap="innerHTML">
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    Total Test Suites
+                </dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                    {{ suites|length }}
+                </dd>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    Passing Suites
+                </dt>
+                <dd class="mt-1 text-3xl font-semibold text-success">
+                    {{ suites|selectattr('status', 'equalto', 'PASS')|list|length }}
+                </dd>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    Failing Suites
+                </dt>
+                <dd class="mt-1 text-3xl font-semibold text-error">
+                    {{ suites|selectattr('status', 'equalto', 'FAIL')|list|length }}
+                </dd>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    Total Tests
+                </dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                    {{ suites|sum(attribute='passed') + suites|sum(attribute='failed') }}
+                </dd>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    Overall Pass Rate
+                </dt>
+                <dd class="mt-1 text-3xl font-semibold text-success">
+                    {% set total_tests = suites|sum(attribute='passed') + suites|sum(attribute='failed') %}
+                    {% if total_tests > 0 %}
+                        {{ "%.1f"|format(100 * suites|sum(attribute='passed') / total_tests) }}%
+                    {% else %}
+                        0.0%
+                    {% endif %}
+                </dd>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Suites Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+     x-data="{ selectedSuite: null }">
+    
+    {% if suites %}
+        {% for suite in suites %}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200"
+             x-data="{ expanded: false }"
+             @click="selectedSuite = '{{ suite.name }}'; expanded = !expanded">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ suite.name }}</h3>
+                    <span class="px-2 py-1 text-sm rounded-full {% if suite.status == 'PASS' %}bg-success bg-opacity-10 text-success{% else %}bg-error bg-opacity-10 text-error{% endif %}">
+                        {{ suite.status }}
+                    </span>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                        <span>Pass Rate</span>
+                        <span>{{ suite.pass_rate }}%</span>
+                    </div>
+                    <div class="mt-1 h-2 bg-gray-200 rounded-full">
+                        <div class="h-2 {% if suite.status == 'PASS' %}bg-success{% else %}bg-error{% endif %} rounded-full" 
+                             style="width: {{ suite.pass_rate }}%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>Last Run: {{ suite.last_run.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span>{{ suite.passed }}/{{ suite.passed + suite.failed }} Tests Passed</span>
+                </div>
+            </div>
+            
+            <!-- Expanded View -->
+            <div x-show="expanded" 
+                 x-collapse
+                 class="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6"
+                 x-init="$watch('expanded', value => {
+                    if (value) {
+                        fetch(`/api/suite/${selectedSuite}`).then(r => r.json()).then(data => {
+                            const ctx = $refs.chart.getContext('2d');
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: data.history.map(h => h.date),
+                                    datasets: [{
+                                        label: 'Pass Rate',
+                                        data: data.history.map(h => h.pass_rate),
+                                        borderColor: '{{ '#10B981' if suite.status == 'PASS' else '#EF4444' }}',
+                                        tension: 0.4,
+                                        borderWidth: 2,
+                                        pointRadius: 4,
+                                        pointHoverRadius: 6
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    layout: {
+                                        padding: {
+                                            top: 20,
+                                            bottom: 20
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100,
+                                            grid: {
+                                                color: 'rgba(156, 163, 175, 0.1)'
+                                            },
+                                            ticks: {
+                                                stepSize: 20
+                                            }
+                                        },
+                                        x: {
+                                            grid: {
+                                                display: false
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    }
+                 })">
+                <div class="h-[300px]">
+                    <canvas class="w-full h-full" x-ref="chart"></canvas>
+                </div>
+                <div class="mt-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Test Duration</span>
+                        <span class="text-sm text-gray-900 dark:text-white">30 minutes</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Failed Tests</span>
+                        <span class="text-sm text-error">{{ suite.failed }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Passed Tests</span>
+                        <span class="text-sm text-success">{{ suite.passed }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-span-3 text-center py-12">
+            <div class="text-gray-500 dark:text-gray-400">
+                <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium">No test results</h3>
+                <p class="mt-1 text-sm">Run the dummy data script to populate the dashboard.</p>
+                <div class="mt-6">
+                    <code class="text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">python create_dummy_data.py</code>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('suiteChart', () => ({
+        init() {
+            // Chart initialization moved to x-init in the template
+        }
+    }))
+})
+</script>
+{% endblock %} 
