@@ -50,7 +50,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
       - name: Deploy to staging
-        run: bash deploy.sh
+        run: bash deploy.github.sh
 
   uat_automation:
     needs: deploy_to_staging
@@ -92,4 +92,4 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
       - name: Deploy to production
-        run: bash deploy.sh 
+        run: bash deploy.github.sh 
