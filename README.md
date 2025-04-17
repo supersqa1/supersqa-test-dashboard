@@ -1,6 +1,6 @@
 # Automation Dashboard 🚀
 
-A modern, real-time test automation dashboard built with Flask and HTMX. This application provides a sleek, responsive interface for monitoring test automation results across your CI/CD pipeline.
+A modern, real-time test automation dashboard built with Flask and HTMX, providing a sleek, responsive interface for monitoring test automation results across CI/CD pipelines.
 
 **Live Demos:**
 - [Production Environment](http://automationdashboard.supersqa.com/)
@@ -25,7 +25,7 @@ A modern, real-time test automation dashboard built with Flask and HTMX. This ap
 - **Flask**: Lightweight WSGI web application framework
 - **Gunicorn**: Production-grade WSGI HTTP Server
 - **MySQL**: Robust data storage for test results
-- **Python 3.8+**: Modern Python features and type hints
+- **Python 3.10+**: Modern Python features and type hints
 
 ### Frontend
 - **HTMX**: Dynamic content updates without JavaScript
@@ -33,122 +33,83 @@ A modern, real-time test automation dashboard built with Flask and HTMX. This ap
 - **Tailwind CSS**: Utility-first CSS framework for modern designs
 
 ### Infrastructure & DevOps
-- **Digital Ocean**: VPS hosting for staging and production
-- **Docker**: Containerization for consistent environments
+- **Digital Ocean**: VPS hosting
 - **GitLab CI/CD**: Automated testing and deployment pipeline
 - **Nginx**: Web server and reverse proxy
 - **Healthcheck Endpoints**: Production-ready monitoring
 
 ## CI/CD Pipeline 🔄
 
-Our robust CI/CD pipeline automates testing, building, and deployment:
-
-```mermaid
-graph LR
-    A[Commit] --> B[Lint]
-    B --> C[Unit Tests]
-    C --> D[Build]
-    D --> E[Deploy to Staging]
-    E --> F[Integration Tests]
-    F --> G[Deploy to Production]
-```
-
-### Pipeline Stages
+The GitLab CI/CD pipeline consists of three main stages:
 
 1. **Pre-Deploy**
-   - Code quality checks with pylint
-   - Automated error detection
-   - Dependency validation
+   ```yaml
+   code_quality:
+     stage: pre_deploy
+     script:
+       - pip3 install .[dev]
+       - pylint ./automationdashboard --recursive=true -E
+   ```
+   - Runs on merge requests and main/develop branches
+   - Performs code quality checks
+   - Validates Python syntax and style
 
-2. **Staging Deployment**
-   - Automated deployment to staging server
-   - Environment configuration
-   - Health check verification
+2. **Deploy to Staging**
+   ```yaml
+   deploy_to_staging:
+     stage: deploy_to_staging
+     variables:
+       ENVIRONMENT: staging
+       PORT: 9099
+     script:
+       - bash deploy.sh
+   ```
+   - Triggered on develop and main branches
+   - Deploys to staging environment
+   - Runs health checks
 
-3. **Integration Testing**
-   - Automated UI tests with Selenium
-   - API endpoint validation
-   - Performance benchmarking
-
-4. **Production Deployment**
-   - Zero-downtime deployment
-   - Automated rollback capability
-   - Post-deployment health checks
+3. **Deploy to Production**
+   ```yaml
+   deploy_to_prod:
+     stage: deploy_to_prod
+     variables:
+       ENVIRONMENT: prod
+       PORT: 9098
+     script:
+       - bash deploy.sh
+   ```
+   - Triggered only on main branch
+   - Deploys to production environment
+   - Verifies application health
 
 ## Infrastructure Architecture 🏗
 
-The application is deployed across multiple environments:
+The application utilizes a cost-effective single VPS setup that hosts both staging and production environments:
 
 ```
-                           ┌─────────────────┐
-                           │   GitLab CI/CD  │
-                           └────────┬────────┘
-                                   │
-                   ┌───────────────┴───────────────┐
-                   │                               │
-          ┌────────▼─────────┐           ┌────────▼─────────┐
-          │  Staging Server  │           │Production Server  │
-          │   (Digital Ocean)│           │  (Digital Ocean)  │
-          └────────┬────────┘           └────────┬─────────┘
-                   │                              │
-          ┌────────▼────────┐           ┌────────▼─────────┐
-          │     Nginx       │           │      Nginx       │
-          └────────┬────────┘           └────────┬─────────┘
-                   │                              │
-          ┌────────▼────────┐           ┌────────▼─────────┐
-          │    Gunicorn     │           │    Gunicorn      │
-          └────────┬────────┘           └────────┬─────────┘
-                   │                              │
-          ┌────────▼────────┐           ┌────────▼─────────┐
-          │  Flask App      │           │   Flask App      │
-          └────────┬────────┘           └────────┬─────────┘
-                   │                              │
-          ┌────────▼────────┐           ┌────────▼─────────┐
-          │     MySQL       │           │      MySQL       │
-          └────────────────┘            └─────────────────┘
+                     ┌─────────────────┐
+                     │   GitLab CI/CD  │
+                     └────────┬────────┘
+                             │
+                     ┌───────▼────────┐
+                     │  Digital Ocean  │
+                     │      VPS       │
+                     └───────┬────────┘
+                             │
+                     ┌───────▼────────┐
+                     │     Nginx      │
+                     │ Reverse Proxy  │
+                     └───┬─────┬──────┘
+                         │     │
+            ┌────────────▼─┐ ┌─▼────────────┐
+            │   Staging    │ │  Production   │
+            │  Port: 9099  │ │  Port: 9098   │
+            └──────────────┘ └──────────────┘
 ```
 
-## Deployment Configuration 🚀
-
-### Server Setup
-
-Each environment (staging/production) runs on a Digital Ocean VPS with:
-- Ubuntu 20.04 LTS
-- 2GB RAM
-- 2 vCPUs
-- 50GB SSD
-
-### Nginx Configuration
-
-```nginx
-server {
-    listen 80;
-    server_name automationdashboard.supersqa.com;
-
-    location / {
-        proxy_pass http://localhost:9098;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-### Gunicorn Service
-
-```ini
-[Unit]
-Description=Automation Dashboard Gunicorn Service
-After=network.target
-
-[Service]
-User=ubuntu
-WorkingDirectory=/opt/automationdashboard
-Environment="PATH=/opt/automationdashboard/venv/bin"
-ExecStart=/opt/automationdashboard/venv/bin/gunicorn -w 4 -b 0.0.0.0:9098 'automationdashboard:app'
-
-[Install]
-WantedBy=multi-user.target
-```
+<div style="padding: 1em; background-color: rgba(255, 149, 0, 0.1); border-left: 4px solid #ff9500; margin: 1em 0;">
+⚠️ Running production and staging environments on the same server is not recommended for enterprise applications. This setup is chosen purely for cost-efficiency in a personal project context, with environments isolated through separate ports and Nginx configurations.
+</div>
 
 ## Getting Started 🚀
 
@@ -183,35 +144,12 @@ WantedBy=multi-user.target
    gunicorn -w 4 -b 0.0.0.0:9098 'automationdashboard:app'
    ```
 
-## Docker Deployment 🐳
-
-```bash
-# Build the image
-docker build -t automation-dashboard .
-
-# Run the container
-docker run -d -p 9098:9098 \
-  -e DATA_STORAGE=database \
-  -e DB_HOST=db \
-  automation-dashboard
-```
-
-## Contributing 🤝
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
 ## Performance Optimizations ⚡
 
 - Efficient database queries
-- Caching where appropriate
 - Minimal JavaScript footprint
 - Optimized asset delivery
 - Smart component updates
-- Load balanced worker processes
 
 ## Security Considerations 🔒
 
@@ -220,17 +158,11 @@ docker run -d -p 9098:9098 \
 - CSRF protection
 - Secure headers
 - Environment variable management
-- Regular security updates
-- Automated vulnerability scanning
-
-## License 📄
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-Built with ❤️ by Admas Kinfu
+Built with ❤️ by Admas Kinfu ([SuperSQA.com](http://supersqa.com))
 
-*Note: This dashboard is part of a larger automation testing infrastructure and showcases modern web development practices, real-time data processing, and production-ready deployment configurations. The application is actively used in production environments for monitoring test automation results.*
+*Note: This dashboard showcases modern web development practices, real-time data processing, and production-ready deployment configurations. The application actively monitors test automation results in production environments.*
 
 
