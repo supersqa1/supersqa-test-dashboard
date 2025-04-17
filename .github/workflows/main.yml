@@ -49,11 +49,14 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+          # Debug SSH key
+          echo "SSH key contents:"
+          head -n 1 ~/.ssh/deploy_key
       - name: Debug environment variables
         run: |
           echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
@@ -103,11 +106,14 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+          # Debug SSH key
+          echo "SSH key contents:"
+          head -n 1 ~/.ssh/deploy_key
       - name: Debug environment variables
         run: |
           echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
