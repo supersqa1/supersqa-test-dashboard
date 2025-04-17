@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install .[dev]
       - name: Run pylint
         run: |
           pylint ./automationdashboard --recursive=true -E
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          pip3 install -r ./uat_automation/requirements.txt
+          pip install .[dev]
       - name: Run UAT tests
         run: |
           pytest -m healthcheck ./uat_automation/tests
