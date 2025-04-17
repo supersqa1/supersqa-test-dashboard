@@ -38,7 +38,7 @@ jobs:
       VIRTUAL_ENVIRONMENT: /root/projects/automation_dashboard/staging/venv_dashboard
       PORT: 9099
       REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
-      DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      DRP3_KEY: ${{ secrets.DRP3_KEY }}
       REMOTE_SSH_USER: root
       STAGING_DB_HOST: ${{ secrets.STAGING_DB_HOST }}
       STAGING_DB_PORT: ${{ secrets.STAGING_DB_PORT }}
@@ -50,12 +50,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           # Debug the secret content
-          echo "Secret length: ${#SSH_PRIVATE_KEY}"
-          echo "First 50 chars of secret: ${SSH_PRIVATE_KEY:0:50}"
-          echo "Last 50 chars of secret: ${SSH_PRIVATE_KEY: -50}"
+          echo "Secret length: ${#DRP3_KEY}"
+          echo "First 50 chars of secret: ${DRP3_KEY:0:50}"
+          echo "Last 50 chars of secret: ${DRP3_KEY: -50}"
           
           # Write the key with proper formatting
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          echo "${{ secrets.DRP3_KEY }}" > ~/.ssh/deploy_key
           
           # Debug the written file
           echo "File size: $(stat -c %s ~/.ssh/deploy_key)"
