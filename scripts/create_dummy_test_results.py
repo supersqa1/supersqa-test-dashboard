@@ -22,7 +22,7 @@ example_payload
 """
 
 
-url = "http://staging.automationdashboard.supersqa.com/postResult"
+# url = "http://staging.automationdashboard.supersqa.com/postResult"
 url = "http://127.0.0.1:9098/postResult"
 
 statuses = ['PASS', 'FAIL']

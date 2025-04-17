@@ -1,10 +1,8 @@
-
 stages:
   - pre_deploy
   - deploy_to_staging
   - tests_on_staging
   - deploy_to_prod
-
 
 variables:
   PY_IMAGE: python:3.11
@@ -15,14 +13,13 @@ code_quality:
     pre_deploy
   image: $PY_IMAGE
   script:
-    - pip3 install -r ./requirements.txt
+    - pip3 install .[dev]  # Install project with dev dependencies
     - pylint ./automationdashboard --recursive=true -E
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
       when: always
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       when: always
-
 
 deploy_to_staging:
   stage:
@@ -46,8 +43,6 @@ deploy_to_staging:
       when: always
       allow_failure: false
 
-
-
 deploy_to_prod:
   stage:
     deploy_to_prod
@@ -65,7 +60,6 @@ deploy_to_prod:
       when: always
       allow_failure: false
 
-
 uat_automation:
   stage:
     tests_on_staging
@@ -73,8 +67,7 @@ uat_automation:
   services:
     - selenium/standalone-firefox
   script:
-    - echo "ABC"
-    - pip3 install -r ./uat_automation/requirements.txt
+    - pip3 install .[dev]  # Install project with test dependencies
     - pytest -m healthcheck ./uat_automation/tests
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"

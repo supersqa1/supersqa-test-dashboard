@@ -1,5 +1,3 @@
-
-
 from automationdashboard import app
 from automationdashboard.dao.test_results_dao import TestResultsDAO
 
@@ -73,9 +71,7 @@ class TestResultsProcessor:
 
     def get_all_reports_in_directory(self):
         """
-        Gets all the available result files in the results folder.
-        The folder is set as instance variable.
-        Each file is read into a json, and collected in a list.
+        Gets all the json files in the results directory and returns their content.
 
         :return: a list of dictionaries. Each dictionary is a result.
         """
@@ -84,8 +80,10 @@ class TestResultsProcessor:
 
         all_files_content = []
         for report_file in all_files:
-            if report_file.endswith('.json'):
-                f_name = os.path.join(self.results_dir, report_file)
+            if not report_file.endswith('.json'):
+                continue
+                
+            f_name = os.path.join(self.results_dir, report_file)
             try:
                 with open(f_name, 'r') as f:
                     data = json.load(f)

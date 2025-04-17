@@ -1,0 +1,46 @@
+<div class="card" id="suite-{{ suite.name }}"
+     hx-get="/api/suite/{{ suite.name }}"
+     hx-trigger="every 30s"
+     hx-swap="outerHTML"
+     data-history="{{ suite.history|tojson|safe }}">
+    <div class="flex justify-between items-start mb-4">
+        <h3 class="text-lg font-semibold">{{ suite.name }}</h3>
+        <span class="px-2 py-1 rounded text-sm {% if suite.status == 'PASS' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {{ suite.status }}
+        </span>
+    </div>
+    
+    <div class="mb-4">
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Pass Rate</span>
+            <span class="font-medium">{{ "%.1f"|format(suite.pass_rate) }}%</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
+            <div class="h-2 rounded-full {% if suite.status == 'PASS' %}bg-green-500{% else %}bg-red-500{% endif %}"
+                 style="width: {{ suite.pass_rate }}%"></div>
+        </div>
+    </div>
+    
+    <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Last Run: {{ suite.last_run }}
+        <br>
+        {{ suite.passed }}/{{ suite.total_tests }} Tests Passed
+    </div>
+    
+    <canvas id="chart-{{ suite.name }}" class="w-full h-40 mb-4"></canvas>
+    
+    <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+            <div class="text-gray-600 dark:text-gray-400">Test Duration</div>
+            <div class="font-medium">{{ suite.execution_time }}</div>
+        </div>
+        <div>
+            <div class="text-gray-600 dark:text-gray-400">Failed Tests</div>
+            <div class="font-medium text-red-500">{{ suite.failed }}</div>
+        </div>
+        <div>
+            <div class="text-gray-600 dark:text-gray-400">Passed Tests</div>
+            <div class="font-medium text-green-500">{{ suite.passed }}</div>
+        </div>
+    </div>
+</div> 
