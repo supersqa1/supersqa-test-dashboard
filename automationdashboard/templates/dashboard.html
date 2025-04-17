@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Stats Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8"
+     hx-get="/api/stats"
+     hx-trigger="load, every 30s">
+    {% include "stats.html" %}
+</div>
+
+<!-- Test Suites Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for suite in suites %}
+    <div class="card" id="suite-{{ suite.name }}">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-semibold">{{ suite.name }}</h3>
+            <span class="px-2 py-1 rounded text-sm {% if suite.status == 'PASS' %}bg-green-100 text-green-800{% elif suite.status == 'WARN' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}"
+                  hx-get="/api/suite/{{ suite.name }}/status"
+                  hx-trigger="every 30s"
+                  hx-swap="outerHTML">
+                {{ suite.status }}
+            </span>
+        </div>
+        
+        <div class="mb-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Pass Rate</span>
+                <span class="font-medium pass-rate"
+                      hx-get="/api/suite/{{ suite.name }}/stats"
+                      hx-trigger="every 30s"
+                      hx-swap="innerHTML">
+                    {{ "%.1f"|format(suite.pass_rate) }}%
+                </span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
+                <div class="h-2 rounded-full progress-bar {% if suite.status == 'PASS' %}bg-green-500{% elif suite.status == 'WARN' %}bg-yellow-500{% else %}bg-red-500{% endif %}"
+                     style="width: {{ suite.pass_rate }}%"
+                     hx-get="/api/suite/{{ suite.name }}/progress"
+                     hx-trigger="every 30s"
+                     hx-swap="outerHTML"></div>
+            </div>
+        </div>
+        
+        <div class="text-sm text-gray-600 dark:text-gray-400 mb-4"
+             hx-get="/api/suite/{{ suite.name }}/details"
+             hx-trigger="every 30s"
+             hx-swap="innerHTML">
+            Last Run: {{ suite.last_run }}
+            <br>
+            {{ suite.passed }}/{{ suite.total_tests }} Tests Passed
+        </div>
+        
+        <div class="h-40 relative mb-4">
+            <canvas id="chart-{{ suite.name }}" 
+                   class="w-full h-full"
+                   data-history='{{ suite.history|tojson|safe }}'
+                   data-status="{{ suite.status }}"
+                   hx-get="/api/suite/{{ suite.name }}/history"
+                   hx-trigger="load, every 30s"
+                   hx-swap="none"
+                   hx-target="this"></canvas>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <div class="text-gray-600 dark:text-gray-400">Test Duration</div>
+                <div class="font-medium">{{ suite.execution_time }}</div>
+            </div>
+            <div>
+                <div class="text-gray-600 dark:text-gray-400">Failed Tests</div>
+                <div class="font-medium text-red-500 failed-tests"
+                     hx-get="/api/suite/{{ suite.name }}/failed"
+                     hx-trigger="every 30s"
+                     hx-swap="innerHTML">
+                    {{ suite.failed }}
+                </div>
+            </div>
+            <div>
+                <div class="text-gray-600 dark:text-gray-400">Passed Tests</div>
+                <div class="font-medium text-green-500 passed-tests"
+                     hx-get="/api/suite/{{ suite.name }}/passed"
+                     hx-trigger="every 30s"
+                     hx-swap="innerHTML">
+                    {{ suite.passed }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // Initialize charts when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAllCharts();
+    });
+
+    // Function to initialize all charts on the page
+    function initializeAllCharts() {
+        document.querySelectorAll('canvas[id^="chart-"]').forEach(canvas => {
+            if (!canvas.chart) {  // Only initialize if not already initialized
+                const history = JSON.parse(canvas.dataset.history || '[]');
+                const status = canvas.dataset.status;
+                initializeChart(canvas, history, status);
+            }
+        });
+    }
+
+    // Function to initialize a single chart
+    function initializeChart(canvas, history, status) {
+        const dates = history.map(h => h.date);
+        const rates = history.map(h => h.pass_rate);
+        const colors = history.map(h => h.color === 'green' ? '#22c55e' : h.color === 'yellow' ? '#eab308' : '#ef4444');
+
+        const config = {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    data: rates,
+                    borderColor: colors[colors.length - 1],
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: colors,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    duration: 750 // Smoother animation
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Pass Rate: ${context.raw.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        if (canvas.chart) {
+            // Update existing chart
+            canvas.chart.data.labels = dates;
+            canvas.chart.data.datasets[0].data = rates;
+            canvas.chart.data.datasets[0].pointBackgroundColor = colors;
+            canvas.chart.data.datasets[0].borderColor = colors[colors.length - 1];
+            canvas.chart.update('none'); // Update without animation
+        } else {
+            // Create new chart
+            canvas.chart = new Chart(canvas, config);
+        }
+    }
+
+    // Listen for HTMX history updates
+    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+        if (evt.target.matches('canvas')) {
+            const canvas = evt.target;
+            try {
+                const response = JSON.parse(evt.detail.xhr.response);
+                canvas.dataset.history = JSON.stringify(response.history);
+                canvas.dataset.status = response.status;
+                initializeChart(canvas, response.history, response.status);
+            } catch (e) {
+                console.error('Failed to update chart:', e);
+            }
+        }
+    });
+</script>
+{% endblock %} 

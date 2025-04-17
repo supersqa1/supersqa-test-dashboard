@@ -1,0 +1,54 @@
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            Total Test Suites
+        </dt>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+            {{ total_suites }}
+        </dd>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            Passing Suites
+        </dt>
+        <dd class="mt-1 text-3xl font-semibold text-success">
+            {{ passing_suites }}
+        </dd>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            Failing Suites
+        </dt>
+        <dd class="mt-1 text-3xl font-semibold text-error">
+            {{ failing_suites }}
+        </dd>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            Total Tests
+        </dt>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+            {{ total_tests }}
+        </dd>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            Overall Pass Rate
+        </dt>
+        <dd class="mt-1 text-3xl font-semibold text-success">
+            {{ "%.1f"|format(pass_rate) }}%
+        </dd>
+    </div>
+</div> 

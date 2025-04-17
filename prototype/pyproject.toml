@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automation-dashboard-prototype"
+version = "0.1.0"
+description = "Modern Automation Dashboard Prototype"
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.6",
+    "aiofiles>=23.2.1",
+    "python-dotenv>=1.0.0",
+    "Werkzeug>=3.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.12.1",
+    "isort>=5.12.0",
+    "pytest>=7.4.0"
+]
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3 
