@@ -11,82 +11,9 @@ A modern, real-time test automation dashboard built with Flask and HTMX, providi
 - [Production Environment](http://automationdashboard.supersqa.com/)
 - [Staging Environment](http://staging.automationdashboard.supersqa.com/)
 
-<div class="dashboard-grid">
-  <div class="dashboard-item">
-    <a href="automationdashboard/docs/assets/dashboard-main.png" target="_blank">
-      <img src="automationdashboard/docs/assets/dashboard-main.png" alt="Main Dashboard View" />
-      <span class="caption">Main Dashboard</span>
-    </a>
-  </div>
-  <div class="dashboard-item">
-    <a href="automationdashboard/docs/assets/dashboard-dark.png" target="_blank">
-      <img src="automationdashboard/docs/assets/dashboard-dark.png" alt="Dark Mode View" />
-      <span class="caption">Dark Mode</span>
-    </a>
-  </div>
-  <div class="dashboard-item">
-    <a href="automationdashboard/docs/assets/dashboard-mobile.png" target="_blank">
-      <img src="automationdashboard/docs/assets/dashboard-mobile.png" alt="Mobile View" />
-      <span class="caption">Mobile View</span>
-    </a>
-  </div>
-</div>
+<img src="automationdashboard/docs/assets/dashboard-main.png" alt="Preview Of The Main Dashboard" width="500"/>
 
-<style>
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin: 20px 0;
-}
 
-.dashboard-item {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-
-.dashboard-item:hover {
-  transform: scale(1.02);
-}
-
-.dashboard-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: opacity 0.3s ease;
-}
-
-.dashboard-item:hover img {
-  opacity: 0.9;
-}
-
-.dashboard-item .caption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 8px;
-  text-align: center;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.dashboard-item:hover .caption {
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
 
 ## Repository Information 📚
 
@@ -135,9 +62,11 @@ This project is maintained in both GitLab and GitHub to demonstrate:
 The project implements CI/CD pipelines on both GitLab and GitHub, showcasing different approaches to automation:
 
 ### GitLab CI/CD
-The GitLab pipeline consists of three main stages, with a visual representation of the pipeline flow:
+The GitLab pipeline consists of three main stages:
 
-![GitLab Pipeline](docs/assets/gitlab-pipeline.png)
+<img src="automationdashboard/docs/assets/gitlab-pipeline.png" alt="Preview Of The GitLab Pipeline" width="500"/>
+
+
 
 1. **Pre-Deploy**
    ```yaml
@@ -182,7 +111,7 @@ The GitLab pipeline consists of three main stages, with a visual representation 
 ### GitHub Actions
 The GitHub workflow provides a similar pipeline with a different interface and configuration approach:
 
-![GitHub Actions Pipeline](docs/assets/github-pipeline.png)
+<img src="automationdashboard/docs/assets/github-pipeline.png" alt="Preview Of The Github CI/CD Pipeline" width="600"/>
 
 ```yaml
 name: CI/CD Pipeline
@@ -235,9 +164,7 @@ The application utilizes a cost-effective single VPS setup that hosts both stagi
             │   Staging    │ │  Production   │
             │  Port: 9099  │ │  Port: 9098   │
             └──────────────┘ └──────────────┘
-```
-
-<div style="padding: 1em; background-color: rgba(255, 149, 0, 0.1); border-left: 4px solid #ff9500; margin: 1em 0;">
+```<div style="padding: 1em; background-color: rgba(255, 149, 0, 0.1); border-left: 4px solid #ff9500; margin: 1em 0;">
 ⚠️ Running production and staging environments on the same server is not recommended for enterprise applications. This setup is chosen purely for cost-efficiency in a personal project context, with environments isolated through separate ports and Nginx configurations.
 </div>
 
@@ -299,5 +226,7 @@ The application utilizes a cost-effective single VPS setup that hosts both stagi
 Built with ❤️ by Admas Kinfu ([SuperSQA.com](http://supersqa.com))
 
 *Note: This dashboard showcases modern web development practices, real-time data processing, and production-ready deployment configurations. The application actively monitors test automation results in production environments.*
+
+
 
 
