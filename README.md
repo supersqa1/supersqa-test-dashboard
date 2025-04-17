@@ -1,7 +1,7 @@
 # Automation Dashboard 🚀
 
-[![GitLab](https://img.shields.io/badge/GitLab-Repository-orange?logo=gitlab)](https://gitlab.com/yourusername/automationdashboard)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/yourusername/automationdashboard)
+[![GitLab](https://img.shields.io/badge/GitLab-Repository-orange?logo=gitlab)](https://gitlab.com/ssqagroup1/supersqa-test-dashboard)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/supersqa1/supersqa-test-dashboard)
 
 A modern, real-time test automation dashboard built with Flask and HTMX, providing a sleek, responsive interface for monitoring test automation results across CI/CD pipelines.
 
@@ -24,8 +24,8 @@ This project is maintained in both GitLab and GitHub to demonstrate:
 - Educational comparison of Git hosting platforms
 
 ### Repository Links
-- **GitLab**: [automationdashboard](https://gitlab.com/yourusername/automationdashboard)
-- **GitHub**: [automationdashboard](https://github.com/yourusername/automationdashboard)
+- **GitLab**: [supersqa-test-dashboard](https://gitlab.com/ssqagroup1/supersqa-test-dashboard)
+- **GitHub**: [supersqa-test-dashboard](https://github.com/supersqa1/supersqa-test-dashboard)
 
 ## Features ✨
 
@@ -191,10 +191,10 @@ The application utilizes a cost-effective single VPS setup that hosts both stagi
 3. **Configure Environment Variables**
    ```bash
    export DATA_STORAGE=database  # or 'file'
-   export DB_HOST=localhost
+   export DB_HOST=your_db_host
    export DB_USER=your_user
    export DB_PASSWORD=your_password
-   export DB_PORT=3306
+   export DB_PORT=your_db_port
    ```
 
 4. **Run the Application**
