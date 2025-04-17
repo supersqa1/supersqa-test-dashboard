@@ -33,7 +33,7 @@ deploy_to_staging:
     - echo "job 1"
     - ls
     - pwd
-    - bash deploy.sh
+    - bash deploy.gitlab.sh
     - env
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
@@ -54,7 +54,7 @@ deploy_to_prod:
   script:
     - echo "job 1"
     - ls
-    - bash deploy.sh
+    - bash deploy.gitlab.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: always
