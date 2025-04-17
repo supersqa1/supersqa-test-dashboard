@@ -48,7 +48,7 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DRP3_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.DRP3_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
       - name: Deploy to staging
