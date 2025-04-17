@@ -40,6 +40,10 @@ jobs:
       REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
       DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       REMOTE_SSH_USER: root
+      STAGING_DB_HOST: ${{ secrets.STAGING_DB_HOST }}
+      STAGING_DB_PORT: ${{ secrets.STAGING_DB_PORT }}
+      STAGING_DB_USER: ${{ secrets.STAGING_DB_USER }}
+      STAGING_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up SSH key
@@ -50,6 +54,12 @@ jobs:
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+      - name: Debug environment variables
+        run: |
+          echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
+          echo "DRP3_KEY is set: $([[ -n "$DRP3_KEY" ]] && echo "yes" || echo "no")"
+          echo "REMOTE_SSH_USER is set: $([[ -n "$REMOTE_SSH_USER" ]] && echo "yes" || echo "no")"
+          ls -la ~/.ssh/deploy_key
       - name: Deploy to staging
         run: bash deploy.sh
 
@@ -84,6 +94,10 @@ jobs:
       REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
       DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       REMOTE_SSH_USER: root
+      PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+      PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
+      PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up SSH key
@@ -94,5 +108,11 @@ jobs:
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+      - name: Debug environment variables
+        run: |
+          echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
+          echo "DRP3_KEY is set: $([[ -n "$DRP3_KEY" ]] && echo "yes" || echo "no")"
+          echo "REMOTE_SSH_USER is set: $([[ -n "$REMOTE_SSH_USER" ]] && echo "yes" || echo "no")"
+          ls -la ~/.ssh/deploy_key
       - name: Deploy to production
         run: bash deploy.sh 
