@@ -50,9 +50,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           # Write the key with proper formatting
-          cat << 'EOF' > ~/.ssh/deploy_key
-          ${{ secrets.SSH_PRIVATE_KEY }}
-          EOF
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
           # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
           # Debug the key file
@@ -119,9 +117,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           # Write the key with proper formatting
-          cat << 'EOF' > ~/.ssh/deploy_key
-          ${{ secrets.SSH_PRIVATE_KEY }}
-          EOF
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
           # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
           # Debug the key file
