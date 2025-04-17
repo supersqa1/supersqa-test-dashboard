@@ -49,14 +49,24 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/deploy_key
+          # Write the key with proper formatting
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
+          # Debug the key file
+          echo "Checking SSH key format:"
+          ls -la ~/.ssh/deploy_key
+          echo "First few lines of the key:"
+          head -n 3 ~/.ssh/deploy_key
+          echo "Last few lines of the key:"
+          tail -n 3 ~/.ssh/deploy_key
+          # Add host to known hosts
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
-          # Debug SSH key
-          echo "SSH key contents:"
-          head -n 1 ~/.ssh/deploy_key
+          # Test SSH connection
+          echo "Testing SSH connection..."
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.REMOTE_HOST_IP }} 'echo "SSH connection successful"'
       - name: Debug environment variables
         run: |
           echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
@@ -106,14 +116,24 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/deploy_key
+          # Write the key with proper formatting
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
+          # Debug the key file
+          echo "Checking SSH key format:"
+          ls -la ~/.ssh/deploy_key
+          echo "First few lines of the key:"
+          head -n 3 ~/.ssh/deploy_key
+          echo "Last few lines of the key:"
+          tail -n 3 ~/.ssh/deploy_key
+          # Add host to known hosts
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
-          # Debug SSH key
-          echo "SSH key contents:"
-          head -n 1 ~/.ssh/deploy_key
+          # Test SSH connection
+          echo "Testing SSH connection..."
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.REMOTE_HOST_IP }} 'echo "SSH connection successful"'
       - name: Debug environment variables
         run: |
           echo "REMOTE_HOST_IP is set: $([[ -n "$REMOTE_HOST_IP" ]] && echo "yes" || echo "no")"
