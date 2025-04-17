@@ -37,6 +37,9 @@ jobs:
       APP_INSTANCE_DIR: /root/projects/automation_dashboard/staging
       VIRTUAL_ENVIRONMENT: /root/projects/automation_dashboard/staging/venv_dashboard
       PORT: 9099
+      REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      REMOTE_SSH_USER: root
     steps:
       - uses: actions/checkout@v4
       - name: Set up SSH key
@@ -78,6 +81,9 @@ jobs:
       APP_INSTANCE_DIR: /root/projects/automation_dashboard/prod
       VIRTUAL_ENVIRONMENT: /root/projects/automation_dashboard/prod/venv_dashboard
       PORT: 9098
+      REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      REMOTE_SSH_USER: root
     steps:
       - uses: actions/checkout@v4
       - name: Set up SSH key
