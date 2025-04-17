@@ -34,10 +34,11 @@ jobs:
     environment: staging
     env:
       ENVIRONMENT: staging
-      APP_INSTANCE_DIR: /root/projects/automation_dashboard/staging
-      VIRTUAL_ENVIRONMENT: /root/projects/automation_dashboard/staging/venv_dashboard
+      APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
+      VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
       PORT: 9099
       REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ~/.ssh/deploy_key
       STAGING_DB_HOST: ${{ secrets.STAGING_DB_HOST }}
       STAGING_DB_PORT: ${{ secrets.STAGING_DB_PORT }}
       STAGING_DB_USER: ${{ secrets.STAGING_DB_USER }}
@@ -76,10 +77,11 @@ jobs:
     environment: production
     env:
       ENVIRONMENT: prod
-      APP_INSTANCE_DIR: /root/projects/automation_dashboard/prod
-      VIRTUAL_ENVIRONMENT: /root/projects/automation_dashboard/prod/venv_dashboard
+      APP_INSTANCE_DIR: ${APP_DIR}/${ENVIRONMENT}
+      VIRTUAL_ENVIRONMENT: ${APP_INSTANCE_DIR}/venv_dashboard
       PORT: 9098
       REMOTE_HOST_IP: ${{ secrets.REMOTE_HOST_IP }}
+      DRP3_KEY: ~/.ssh/deploy_key
       PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
       PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
       PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
