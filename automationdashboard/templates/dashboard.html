@@ -156,7 +156,15 @@
                         }
                     },
                     x: {
-                        display: false
+                        display: true,
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            callback: function(value, index) {
+                                const date = new Date(dates[index]);
+                                return date.toLocaleDateString();
+                            }
+                        }
                     }
                 }
             }
