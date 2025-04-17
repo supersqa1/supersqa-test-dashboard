@@ -49,21 +49,27 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
+          # Debug the secret content
+          echo "Secret length: ${#SSH_PRIVATE_KEY}"
+          echo "First 50 chars of secret: ${SSH_PRIVATE_KEY:0:50}"
+          echo "Last 50 chars of secret: ${SSH_PRIVATE_KEY: -50}"
+          
           # Write the key with proper formatting
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          
+          # Debug the written file
+          echo "File size: $(stat -c %s ~/.ssh/deploy_key)"
+          echo "File content:"
+          cat ~/.ssh/deploy_key
+          
           # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
-          # Debug the key file
-          echo "Checking SSH key format:"
-          ls -la ~/.ssh/deploy_key
-          echo "First few lines of the key:"
-          head -n 3 ~/.ssh/deploy_key
-          echo "Last few lines of the key:"
-          tail -n 3 ~/.ssh/deploy_key
+          
           # Add host to known hosts
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+          
           # Test SSH connection
           echo "Testing SSH connection..."
           ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.REMOTE_HOST_IP }} 'echo "SSH connection successful"'
@@ -116,21 +122,27 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
+          # Debug the secret content
+          echo "Secret length: ${#SSH_PRIVATE_KEY}"
+          echo "First 50 chars of secret: ${SSH_PRIVATE_KEY:0:50}"
+          echo "Last 50 chars of secret: ${SSH_PRIVATE_KEY: -50}"
+          
           # Write the key with proper formatting
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          
+          # Debug the written file
+          echo "File size: $(stat -c %s ~/.ssh/deploy_key)"
+          echo "File content:"
+          cat ~/.ssh/deploy_key
+          
           # Ensure proper permissions
           chmod 600 ~/.ssh/deploy_key
-          # Debug the key file
-          echo "Checking SSH key format:"
-          ls -la ~/.ssh/deploy_key
-          echo "First few lines of the key:"
-          head -n 3 ~/.ssh/deploy_key
-          echo "Last few lines of the key:"
-          tail -n 3 ~/.ssh/deploy_key
+          
           # Add host to known hosts
           ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ecdsa ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -t ed25519 ${{ secrets.REMOTE_HOST_IP }} >> ~/.ssh/known_hosts
+          
           # Test SSH connection
           echo "Testing SSH connection..."
           ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.REMOTE_HOST_IP }} 'echo "SSH connection successful"'
