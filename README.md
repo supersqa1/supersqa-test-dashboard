@@ -1,232 +1,185 @@
-# Automation Dashboard 🚀
+# 🚀 SuperSQA Automation Dashboard
 
-[![GitLab](https://img.shields.io/badge/GitLab-Repository-orange?logo=gitlab)](https://gitlab.com/ssqagroup1/supersqa-test-dashboard)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/supersqa1/supersqa-test-dashboard)
+A modern, real-time **QA automation dashboard** built with Flask, HTMX, and TailwindCSS — designed to monitor CI/CD test pipelines with clean visuals, environment separation, and responsive performance.
 
-A modern, real-time test automation dashboard built with Flask and HTMX, providing a sleek, responsive interface for monitoring test automation results across CI/CD pipelines.
-
-> **Note**: This project is maintained in both GitLab and GitHub as part of an educational initiative to demonstrate CI/CD pipeline implementations across different platforms. The codebase is identical in both repositories, with platform-specific CI/CD configurations.
-
-**Live Demos:**
-- [Production Environment](http://automationdashboard.supersqa.com/)
-- [Staging Environment](http://staging.automationdashboard.supersqa.com/)
-
-<img src="automationdashboard/docs/assets/dashboard-main.png" alt="Preview Of The Main Dashboard" width="500"/>
-
-
-
-## Repository Information 📚
-
-This project is maintained in both GitLab and GitHub to demonstrate:
-- Different CI/CD pipeline implementations
-- Platform-specific automation capabilities
-- Cross-platform deployment strategies
-- Educational comparison of Git hosting platforms
-
-### Repository Links
-- **GitLab**: [supersqa-test-dashboard](https://gitlab.com/ssqagroup1/supersqa-test-dashboard)
-- **GitHub**: [supersqa-test-dashboard](https://github.com/supersqa1/supersqa-test-dashboard)
-
-## Features ✨
-
-- **Real-Time Updates**: Live monitoring of test results with automatic 30-second refresh cycles
-- **Smart Status Tracking**: 
-  - 🟢 Green: 100% pass rate
-  - 🟡 Yellow: 90-99% pass rate
-  - 🔴 Red: <90% pass rate
-- **Interactive Charts**: Visual representation of test pass rates over time
-- **Responsive Design**: Seamless experience across desktop and mobile devices
-- **Dark Mode Support**: Eye-friendly interface for all lighting conditions
-
-## Technology Stack 🛠
-
-### Backend
-- **Flask**: Lightweight WSGI web application framework
-- **Gunicorn**: Production-grade WSGI HTTP Server
-- **MySQL**: Robust data storage for test results
-- **Python 3.10+**: Modern Python features and type hints
-
-### Frontend
-- **HTMX**: Dynamic content updates without JavaScript
-- **Chart.js**: Interactive and responsive charts
-- **Tailwind CSS**: Utility-first CSS framework for modern designs
-
-### Infrastructure & DevOps
-- **Digital Ocean**: VPS hosting
-- **GitLab CI/CD**: Automated testing and deployment pipeline
-- **Nginx**: Web server and reverse proxy
-- **Healthcheck Endpoints**: Production-ready monitoring
-
-## CI/CD Pipeline 🔄
-
-The project implements CI/CD pipelines on both GitLab and GitHub, showcasing different approaches to automation:
-
-### GitLab CI/CD
-The GitLab pipeline consists of three main stages:
-
-<img src="automationdashboard/docs/assets/gitlab-pipeline.png" alt="Preview Of The GitLab Pipeline" width="500"/>
-
-
-
-1. **Pre-Deploy**
-   ```yaml
-   code_quality:
-     stage: pre_deploy
-     script:
-       - pip3 install .[dev]
-       - pylint ./automationdashboard --recursive=true -E
-   ```
-   - Runs on merge requests and main/develop branches
-   - Performs code quality checks
-   - Validates Python syntax and style
-
-2. **Deploy to Staging**
-   ```yaml
-   deploy_to_staging:
-     stage: deploy_to_staging
-     variables:
-       ENVIRONMENT: staging
-       PORT: 9099
-     script:
-       - bash deploy.sh
-   ```
-   - Triggered on develop and main branches
-   - Deploys to staging environment
-   - Runs health checks
-
-3. **Deploy to Production**
-   ```yaml
-   deploy_to_prod:
-     stage: deploy_to_prod
-     variables:
-       ENVIRONMENT: prod
-       PORT: 9098
-     script:
-       - bash deploy.sh
-   ```
-   - Triggered only on main branch
-   - Deploys to production environment
-   - Verifies application health
-
-### GitHub Actions
-The GitHub workflow provides a similar pipeline with a different interface and configuration approach:
-
-<img src="automationdashboard/docs/assets/github-pipeline.png" alt="Preview Of The Github CI/CD Pipeline" width="600"/>
-
-```yaml
-name: CI/CD Pipeline
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install .[dev]
-      - name: Run tests
-        run: |
-          pytest
-```
-
-<div style="padding: 1em; background-color: rgba(0, 123, 255, 0.1); border-left: 4px solid #007bff; margin: 1em 0;">
-💡 **Note**: The screenshots above show the actual pipeline interfaces from both platforms. While the configurations are similar in functionality, the visual representation and workflow management differ between GitLab and GitHub, highlighting the unique features of each platform.
-</div>
-
-## Infrastructure Architecture 🏗
-
-The application utilizes a cost-effective single VPS setup that hosts both staging and production environments:
-
-```
-                     ┌─────────────────┐
-                     │  GitHub Actions │
-                     └────────┬────────┘
-                             │
-                     ┌───────▼────────┐
-                     │  Digital Ocean  │
-                     │      VPS       │
-                     └───────┬────────┘
-                             │
-                     ┌───────▼────────┐
-                     │     Nginx      │
-                     │ Reverse Proxy  │
-                     └───┬─────┬──────┘
-                         │     │
-            ┌────────────▼─┐ ┌─▼────────────┐
-            │   Staging    │ │  Production   │
-            │  Port: 9099  │ │  Port: 9098   │
-            └──────────────┘ └──────────────┘
-```<div style="padding: 1em; background-color: rgba(255, 149, 0, 0.1); border-left: 4px solid #ff9500; margin: 1em 0;">
-⚠️ Running production and staging environments on the same server is not recommended for enterprise applications. This setup is chosen purely for cost-efficiency in a personal project context, with environments isolated through separate ports and Nginx configurations.
-</div>
-
-## Getting Started 🚀
-
-1. **Clone the Repository**
-   ```bash
-   # From GitLab
-   git clone https://gitlab.com/yourusername/automationdashboard.git
-   
-   # From GitHub
-   git clone https://github.com/yourusername/automationdashboard.git
-   
-   cd automationdashboard
-   ```
-
-2. **Set Up Environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -e .[dev]
-   ```
-
-3. **Configure Environment Variables**
-   ```bash
-   export DATA_STORAGE=database  # or 'file'
-   export DB_HOST=your_db_host
-   export DB_USER=your_user
-   export DB_PASSWORD=your_password
-   export DB_PORT=your_db_port
-   ```
-
-4. **Run the Application**
-   ```bash
-   # Development
-   python automationdashboard/run.py
-
-   # Production
-   gunicorn -w 4 -b 0.0.0.0:9098 'automationdashboard:app'
-   ```
-
-## Performance Optimizations ⚡
-
-- Efficient database queries
-- Minimal JavaScript footprint
-- Optimized asset delivery
-- Smart component updates
-
-## Security Considerations 🔒
-
-- SQL injection prevention
-- XSS protection
-- CSRF protection
-- Secure headers
-- Environment variable management
+✅ Supports both **GitLab CI/CD** and **GitHub Actions**  
+✅ Live staging and production environments  
+✅ Designed for real-world QA workflows and teaching automation best practices
 
 ---
 
-Built with ❤️ by Admas Kinfu ([SuperSQA.com](http://supersqa.com))
+## 🌐 Live Demos
+- **Production**: [automationdashboard.supersqa.com](http://automationdashboard.supersqa.com/)
+- **Staging**: [staging.automationdashboard.supersqa.com](http://staging.automationdashboard.supersqa.com/)
 
-*Note: This dashboard showcases modern web development practices, real-time data processing, and production-ready deployment configurations. The application actively monitors test automation results in production environments.*
+> 🔒 *Note: Normally these would be password preotected but for demo/education reasons, these are open to the public*
 
+---
 
+## 📸 Preview
 
+<p align="center">
+  <img src="automationdashboard/docs/assets/dashboard-main.png" alt="Main Dashboard Preview" width="600"/>
+</p>
 
+---
+
+## 🧠 Project Purpose
+
+This project was created as part of the **SuperSQA Automation Training** to:
+- Provide learners and teams a clean way to monitor test results
+- Showcase real-world CI/CD pipelines across GitLab and GitHub
+- Demonstrate infrastructure deployment, test reporting, and status aggregation
+- Encourage best practices in dev/test ops for automation engineers
+
+It’s also used in training exercises to simulate real QA job experience.
+
+---
+
+## ✨ Features
+
+- 🔄 **Auto-refreshing dashboard** (every 30 seconds)
+- 🎯 **Pass rate logic**:
+  - ✅ Green = 100% pass
+  - ⚠️ Yellow = 90–99%
+  - ❌ Red = <90%
+- 📈 **Interactive trend charts** (Chart.js)
+- 🌗 **Dark mode support**
+- 📱 **Mobile-friendly UI**
+- 🔄 **GitLab + GitHub CI/CD support**
+- 🔐 **Staging vs Production isolation**
+
+---
+
+## 🛠 Tech Stack
+
+### 🔧 Backend
+- Python 3.10+
+- Flask + Gunicorn
+- MySQL
+- Nginx
+- Healthcheck endpoints
+
+### 🎨 Frontend
+- HTMX
+- Tailwind CSS
+- Chart.js
+
+### 🚀 DevOps & Hosting
+- GitLab CI/CD
+- GitHub Actions
+- Digital Ocean VPS (shared for stage/prod)
+
+---
+
+## 🔄 CI/CD Pipelines
+
+### 📦 GitLab
+
+<img src="automationdashboard/docs/assets/gitlab-pipeline.png" alt="GitLab Pipeline" width="500"/>
+
+Stages:
+1. **Pre-Deploy** – Code quality check using `pylint`
+2. **Deploy to Staging** – Auto-deploy to port 9099
+3. **Deploy to Production** – Deploys to port 9098 with health verification
+
+### 🧪 GitHub Actions
+
+<img src="automationdashboard/docs/assets/github-pipeline.png" alt="GitHub Actions Pipeline" width="550"/>
+
+Mirrors GitLab functionality using native GitHub workflows.
+
+> 💡 *The pipelines demonstrate different platform behaviors while delivering the same output — great for training comparisons.*
+
+---
+
+## 🏗 Architecture Overview
+
+```
+             ┌─────────────────┐
+             │  GitHub Actions │
+             └───────┬─────────┘
+                     │
+             ┌───────▼────────┐
+             │  Digital Ocean │
+             │      VPS       │
+             └───────┬────────┘
+                     │
+             ┌───────▼────────┐
+             │     Nginx      │
+             │ Reverse Proxy  │
+             └───────┬────────┘
+                     │
+         ┌───────────▼────────────┐
+         │ Staging (Port: 9099)   │
+         └────────────────────────┘
+         ┌───────────▼────────────┐
+         │ Production (Port: 9098)│
+         └────────────────────────┘
+```
+
+> ⚠️ *Running both environments on the same VPS is a cost-saving measure for this educational project only. It is not a recommended enterprise practice.*
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+```bash
+# GitHub
+git clone https://github.com/supersqa1/supersqa-automation-dashboard.git
+
+# GitLab (same codebase)
+git clone https://gitlab.com/ssqagroup1/supersqa-automation-dashboard.git
+
+cd supersqa-automation-dashboard
+```
+
+### 2. Setup Environment
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e .[dev]
+```
+
+### 3. Configure Env Variables
+```bash
+export DATA_STORAGE=database
+export DB_HOST=your_db_host
+export DB_USER=your_user
+export DB_PASSWORD=your_password
+export DB_PORT=your_port
+```
+
+### 4. Run Locally
+```bash
+# Development
+python automationdashboard/run.py
+
+# Production
+gunicorn -w 4 -b 0.0.0.0:9098 'automationdashboard:app'
+```
+
+---
+
+## ⚡ Performance Highlights
+- Lightweight app with optimized queries
+- Minimal JS, HTMX-driven updates
+- Asset minification for fast load
+
+## 🔒 Security Features
+- Input sanitation and injection protection
+- Secure headers and CSRF handling
+- Environment isolation
+
+---
+
+## 🧑‍💻 Author
+
+Built with ❤️ by **Admas Kinfu**  
+📘 [SuperSQA.com](http://supersqa.com)  
+🔧 [GitHub](https://github.com/supersqa1) · 🧪 [GitLab](https://gitlab.com/ssqagroup1)
+
+---
+
+> ✨ *This dashboard demonstrates full-stack QA engineering skills including automation visibility, infrastructure, deployment pipelines, and modern frontend development — all in one project.*
